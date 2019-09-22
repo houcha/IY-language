@@ -1,0 +1,3 @@
+     'He\0llo world''
+     'Helloo312world'
+  asdfasdf    
