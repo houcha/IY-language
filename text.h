@@ -36,9 +36,6 @@ class Text {
   std::vector<std::string_view> lines;
 
  private:
-  /// Input file pointer.
-  FILE* file;
-
   /**
    * @function GetFileSize
    * @brief Get the file size.
