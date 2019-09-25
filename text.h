@@ -43,26 +43,28 @@ class Text {
    * @function GetFileSize
    * @brief Get the file size.
    *
-   * @param p_file
+   * @param file
    * @return int
    */
-  int get_file_size();
+  int get_file_size(FILE* file);
 
   /**
    * @brief Fill buffer with text from the file.
    *
-   * @param p_data
-   * @param lines_num
-   * @param p_file
+   * @param file
    */
-  void fill_buffer();
+  void fill_buffer(FILE* file);
 
   /**
-   * @brief Construct lines from raw data.
+   * @brief Format buffer (change \n to \0) and count lines number.
    *
-   * @param lines
-   * @param p_data
-   * @param data_size
+   * @param lines_num
+   */
+  void format_buffer_and_count_lines(int& lines_number);
+
+  /**
+   * @brief Construct lines from buffer.
+   *
    */
   void fill_lines();
 
@@ -70,3 +72,4 @@ class Text {
   inline void seek_for_line_begin(const std::string& buffer, int& cur_pos);
   inline void seek_for_line_end  (const std::string& buffer, int& cur_pos);
 };
+
