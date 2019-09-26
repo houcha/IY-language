@@ -26,7 +26,7 @@ class Text {
    *
    * @param input_file
    */
-  Text(FILE* input_file);
+  explicit Text(FILE* input_file);
   ~Text() = default;
 
   /// Raw file content.
