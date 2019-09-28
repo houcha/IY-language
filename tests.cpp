@@ -47,12 +47,12 @@ void TEST_LINES_FILLING() {
   Text poem(input_test_file);
   fclose(input_test_file);
 
-  ASSERT(real_lines.size() == poem.lines.size(),
+  ASSERT(real_lines.size() == poem.lines_.size(),
           "read lines number is different from specified");
 
-  for (int i = 0; i < real_lines.size(); ++i) {
-    for (int j = 0; j < poem.lines[i].size(); ++j) {
-      ASSERT(poem.lines[i][j] == real_lines[i][j],
+  for (int i = 0; i < poem.lines_.size(); ++i) {
+    for (int j = 0; j < poem.lines_[i].size(); ++j) {
+      ASSERT(poem.lines_[i][j] == real_lines[i][j],
               "strings are not equal");
     }
   }
@@ -66,14 +66,14 @@ void TEST_FORWARD_LINES_SORTING() {
   Text poem(input_test_file);
   fclose(input_test_file);
 
-  SortLinesForward(poem.lines);
+  SortLinesForward(poem.lines_);
 
-  ASSERT(real_forward_sorted_lines.size() == poem.lines.size(),
+  ASSERT(real_forward_sorted_lines.size() == poem.lines_.size(),
           "read lines number is different from specified");
 
-  for (int i = 0; i < poem.lines.size(); ++i) {
-    for (int j = 0; j < poem.lines[i].size(); ++j) {
-      ASSERT(poem.lines[i][j] == real_forward_sorted_lines[i][j],
+  for (int i = 0; i < poem.lines_.size(); ++i) {
+    for (int j = 0; j < poem.lines_[i].size(); ++j) {
+      ASSERT(poem.lines_[i][j] == real_forward_sorted_lines[i][j],
               "strings are not equal");
     }
   }
@@ -87,14 +87,14 @@ void TEST_REVERSE_LINES_SORTING() {
   Text poem(input_test_file);
   fclose(input_test_file);
 
-  SortLinesReverse(poem.lines);
+  SortLinesReverse(poem.lines_);
 
-  ASSERT(real_reverse_sorted_lines.size() == poem.lines.size(),
+  ASSERT(real_reverse_sorted_lines.size() == poem.lines_.size(),
           "read lines number is different from specified");
 
-  for (int i = 0; i < poem.lines.size(); ++i) {
-    for (int j = 0; j < poem.lines[i].size(); ++j) {
-      ASSERT(poem.lines[i][j] == real_reverse_sorted_lines[i][j],
+  for (int i = 0; i < poem.lines_.size(); ++i) {
+    for (int j = 0; j < poem.lines_[i].size(); ++j) {
+      ASSERT(poem.lines_[i][j] == real_reverse_sorted_lines[i][j],
               "strings are not equal");
     }
   }

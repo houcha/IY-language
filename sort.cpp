@@ -9,3 +9,4 @@ void SortLinesForward(std::vector<std::string_view>& lines) {
 void SortLinesReverse(std::vector<std::string_view>& lines) {
   std::sort(lines.begin(), lines.end(), ReverseCmp());
 }
+

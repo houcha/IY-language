@@ -38,13 +38,13 @@ int main() {
 
   Text poem(input_file);
 
-  SortLinesForward(poem.lines);
-  OutputLines(poem.lines, output_forward_file);
+  SortLinesForward(poem.lines_);
+  OutputLines(poem.lines_, output_forward_file);
 
-  SortLinesReverse(poem.lines);
-  OutputLines(poem.lines, output_reverse_file);
+  SortLinesReverse(poem.lines_);
+  OutputLines(poem.lines_, output_reverse_file);
 
-  OutputText(poem.buffer, output_origin_file);
+  OutputText(poem.buffer_, output_origin_file);
 
   fclose(input_file);
   fclose(output_forward_file);
@@ -53,3 +53,4 @@ int main() {
 
   return 0;
 }
+

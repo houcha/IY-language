@@ -10,9 +10,7 @@ void OutputLines(const std::vector<std::string_view>& lines,
 }
 
 void OutputText(const std::string& text, FILE* output_file) {
-  // Remember about extra \n at the end of p_data
-  // which is not a part of initial (input) file.
-  for (int i = 0; i < text.size() - 1; ++i) {
+  for (int i = 0; i < text.size(); ++i) {
     if (text[i] == '\0') {
       fprintf(output_file, "\n");
     } else {

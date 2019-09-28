@@ -46,7 +46,8 @@ void move_to_next_correct_symbol(const std::string_view& str,
  * (i.e. strings "HELLO" and "hello" are equal)
  */
 struct ForwardCmp {
-  bool operator()(const std::string_view& a, const std::string_view& b);
+  bool operator()(const std::string_view& a,
+                  const std::string_view& b);
 };
 
 static inline
@@ -61,6 +62,7 @@ void reverse_move_to_next_correct_symbol(const std::string_view& str,
  * (i.e. strings "HELLO" and "hello" are equal)
  */
 struct ReverseCmp {
-  bool operator()(const std::string_view& a, const std::string_view& b);
+  bool operator()(const std::string_view& a,
+                  const std::string_view& b);
 };
 

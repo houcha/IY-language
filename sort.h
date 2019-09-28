@@ -24,3 +24,4 @@ void SortLinesForward(std::vector<std::string_view>& lines);
  * @param lines
  */
 void SortLinesReverse(std::vector<std::string_view>& lines);
+

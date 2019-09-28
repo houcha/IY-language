@@ -1,11 +1,11 @@
 /**
  * @file output.h
- * @brief Header contains functions which print different texts into files. 
+ * @brief Header contains functions which print different texts into files.
  * @version 0.1
  * @date 2019-09-20
- * 
+ *
  * @copyright Copyright (c) 2019
- * 
+ *
  */
 
 #include <string>
@@ -29,3 +29,4 @@ void OutputLines(const std::vector<std::string_view>& lines, FILE* output_file);
  * @param p_out_file
  */
 void OutputText(const std::string& text, FILE* output_file);
+

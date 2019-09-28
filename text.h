@@ -21,7 +21,7 @@ class Text {
   /**
    * @brief Construct a new Text object with buffer filled with file content
    *
-   * After Text has been constructed from file, its fields: `buffer` and `lines`
+   * After Text has been constructed from file, its fields: `buffer_` and `lines_`
    * are correct.
    *
    * @param input_file
@@ -30,18 +30,16 @@ class Text {
   ~Text() = default;
 
   /// Raw file content.
-  std::string buffer;
+  std::string buffer_;
 
   /// File text split onto lines. Do not contain empty strings.
-  std::vector<std::string_view> lines;
+  std::vector<std::string_view> lines_;
 
  private:
   /**
-   * @function GetFileSize
    * @brief Get the file size.
    *
    * @param file
-   * @return int
    */
   int get_file_size(FILE* file);
 
@@ -53,20 +51,15 @@ class Text {
   void fill_buffer(FILE* file);
 
   /**
-   * @brief Format buffer (change \n to \0) and count lines number.
+   * @brief Replace \n with \0 in the buffer for next lines construction.
    *
-   * @param lines_num
+   * @param lines_number
    */
   void format_buffer_and_count_lines(int& lines_number);
 
   /**
    * @brief Construct lines from buffer.
-   *
    */
   void fill_lines();
-
-  inline void update_lines_number(int& lines_number, int& cur_line_length);
-  inline void seek_for_line_begin(const std::string& buffer, int& cur_pos);
-  inline void seek_for_line_end  (const std::string& buffer, int& cur_pos);
 };
 
