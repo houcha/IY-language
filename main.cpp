@@ -2,11 +2,21 @@
 #include "stack.hpp"
 
 int main() {
-  const int stk_size = 2;
+  const int size = 5;
+  const int N = 10;
 
-  StaticStack<int, stk_size> stk;
+  StaticStack<int, size> stack;
 
-  DynamicStack<int> dstk;
+  for (int i = 0; i < N; ++i) {
+    stack.push(i);
+    std::cout << "i: " << i << " top(): " << stack.top() << '\n';
+  }
+
+  for (int i = 0; i < N; ++i) {
+    stack.pop();
+    std::cout << "i: " << i << " top(): " << stack.top() << '\n';
+  }
 
   return 0;
 }
+
