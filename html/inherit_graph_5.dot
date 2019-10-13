@@ -1,0 +1,14 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node10 [label="BaseStack\< T, StaticProtected\lData\< T, N \> \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classBaseStack.html",tooltip=" "];
+  Node10 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="StaticStack\< T, N \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classStaticStack.html",tooltip=" "];
+  Node0 [label="ProtectedData\< T, N \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structProtectedData.html",tooltip=" "];
+  Node0 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 [label="StaticProtectedData\l\< T, N \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structStaticProtectedData.html",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="darkgreen",fontsize="10",style="solid",fontname="Helvetica"];
+}
