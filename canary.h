@@ -17,6 +17,8 @@ class Canary {
   public:
 
     Canary() : value_(ok_key) {}
+
+    // Do not copy canaries.
     Canary(const Canary&) = delete;
     Canary(Canary&&)      = delete;
 

@@ -1,9 +1,28 @@
+/**
+ * @file verifier.h
+ * @date 2019-09-29
+ *
+ * @brief This file contains Verifier.
+ *
+ * To enable dumping for your class, define next methods:
+ *
+ * // Return true if class is in good state and false otherwise.
+ * // Message is an extra message which will be dumped with state.
+ * bool OK(std::string& message);
+ *
+ * and
+ *
+ * // Dump into `out` stream. `is_ok` is a result of OK() call.
+ * void Dump(std::ostream& out, bool is_ok);
+ *
+ */
+
+
+
 #ifndef VERIFIER_H
 #define VERIFIER_H
 
-
 #include "dumptools.h"
-
 
 
 //============================ DEFINES =========================================
@@ -31,23 +50,15 @@ Verifier<T> MakeVerifier(const T& object,
                          const std::string& hat,
                          std::ostream& out);
 
-/**
- * VERIFIED( 'std::ostream' out)
- *
- * While used in a class method this macro dump info-hat and calls user_defined
- * prototypes:
- *
- * // Return true if class is in good state and false otherwise.
- * bool OK();
- *
- * and
- *
- * // Dump into `out` stream. `is_ok` is a result of OK() call.
- * void Dump(std::ostream& out, bool is_ok);
- */
-#define VERIFIED(out) auto verifier = MakeVerifier(*this, HAT(), out);
+#define VERIFIED() auto verifier = MakeVerifier(*this, HAT(), dump_stream);
 
-#define ENABLE_VERIFICATION() template <class U> friend class Verifier;
+#define ENABLE_VERIFICATION(stream)                                            \
+  std::ostream& dump_stream = stream;                                          \
+  template <class U> friend class Verifier;
+
+#define ENABLE_VERIFICATION(stream)                                            \
+  std::ostream& dump_stream = stream;                                          \
+  template <class U> friend class Verifier;
 
 /// Create Verifier from struct T.
 // Let MakeVerifier deduce template patameter T itself.
@@ -125,6 +136,7 @@ void Verifier<T>::Check(const std::string& additional_message) {
 #endif
 #endif
 }
+
 
 #endif // VERIFIER_H
 

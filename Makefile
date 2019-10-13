@@ -5,8 +5,8 @@ STATIC_CHECK_FLAGS = -Wall -Wextra -pedantic
 SRC = main.cpp
 
 all:
-	$(CXX) $(CXXFLAGS) -o all.exe $(SRC)
-	./all.exe
+	$(CXX) $(CXXFLAGS) -o main.exe $(SRC)
+	./main.exe
 
 
 debug:
@@ -25,5 +25,5 @@ test:
 
 
 clean:
-	rm run.exe debug.exe test.exe
+	rm main.exe debug.exe test.exe
 

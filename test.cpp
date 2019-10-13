@@ -14,91 +14,91 @@ UserStruct Poison<UserStruct>() {
   return { 11, '\0', {-1, -1}, true};
 }
 
-////========================= DYNAMIC STACK TESTS =================================
-//TEST(DynamicStackTest, TestCreation) {
-//
-//  DynamicStack<int> stack0;
-//  DynamicStack<uint64_t> stack1;
-//  DynamicStack<double> stack2;
-//  DynamicStack<bool> stack3;
-//  DynamicStack<UserStruct> stack4;
-//}
-//
-//TEST(DynamicStackTest, TestPushAndPop) {
-//
-//  DynamicStack<int> stack;
-//
-//  // Check init state.
-//  EXPECT_EQ(stack.empty(), true);
-//  EXPECT_EQ(stack.size(), 0);
-//
-//  stack.pop();
-//  EXPECT_EQ(stack.empty(), true);
-//  EXPECT_EQ(stack.size(), 0);
-//
-//  stack.push(0);
-//  // 0
-//  EXPECT_EQ(stack.top(), 0);
-//  EXPECT_EQ(stack.empty(), false);
-//  EXPECT_EQ(stack.size(), 1);
-//
-//  stack.push(1234567);
-//  // 0 1234567
-//  EXPECT_EQ(stack.top(), 1234567);
-//  EXPECT_EQ(stack.empty(), false);
-//  EXPECT_EQ(stack.size(), 2);
-//
-//  stack.push(-321);
-//  // 0 1234567 -321
-//  EXPECT_EQ(stack.top(), -321);
-//  EXPECT_EQ(stack.empty(), false);
-//  EXPECT_EQ(stack.size(), 3);
-//
-//  stack.pop();
-//  // 0 1234567
-//  EXPECT_EQ(stack.top(), 1234567);
-//  EXPECT_EQ(stack.empty(), false);
-//  EXPECT_EQ(stack.size(), 2);
-//
-//  stack.push(999);
-//  // 0 1234567 999
-//  EXPECT_EQ(stack.top(), 999);
-//  EXPECT_EQ(stack.empty(), false);
-//  EXPECT_EQ(stack.size(), 3);
-//
-//  stack.push(999);
-//  // 0 1234567 999 999
-//  EXPECT_EQ(stack.top(), 999);
-//  EXPECT_EQ(stack.empty(), false);
-//  EXPECT_EQ(stack.size(), 4);
-//
-//  stack.pop();
-//  // 0 1234567 999
-//  EXPECT_EQ(stack.top(), 999);
-//  EXPECT_EQ(stack.empty(), false);
-//  EXPECT_EQ(stack.size(), 3);
-//
-//  stack.pop();
-//  // 0 1234567
-//  EXPECT_EQ(stack.top(), 1234567);
-//  EXPECT_EQ(stack.empty(), false);
-//  EXPECT_EQ(stack.size(), 2);
-//
-//  stack.pop();
-//  // 0
-//  EXPECT_EQ(stack.top(), 0);
-//  EXPECT_EQ(stack.empty(), false);
-//  EXPECT_EQ(stack.size(), 1);
-//
-//  stack.pop();
-//  EXPECT_EQ(stack.empty(), true);
-//  EXPECT_EQ(stack.size(), 0);
-//}
+//========================= DYNAMIC STACK TESTS =================================
+TEST(DynamicStackTest, TestCreation) {
+
+  DynamicStack<int> stack0;
+  DynamicStack<uint64_t> stack1;
+  DynamicStack<double> stack2;
+  DynamicStack<bool> stack3;
+  DynamicStack<UserStruct> stack4;
+}
+
+TEST(DynamicStackTest, TestPushAndPop) {
+
+  DynamicStack<int> stack;
+
+  // Check init state.
+  EXPECT_EQ(stack.empty(), true);
+  EXPECT_EQ(stack.size(), 0);
+
+  stack.pop();
+  EXPECT_EQ(stack.empty(), true);
+  EXPECT_EQ(stack.size(), 0);
+
+  stack.push(0);
+  // 0
+  EXPECT_EQ(stack.top(), 0);
+  EXPECT_EQ(stack.empty(), false);
+  EXPECT_EQ(stack.size(), 1);
+
+  stack.push(1234567);
+  // 0 1234567
+  EXPECT_EQ(stack.top(), 1234567);
+  EXPECT_EQ(stack.empty(), false);
+  EXPECT_EQ(stack.size(), 2);
+
+  stack.push(-321);
+  // 0 1234567 -321
+  EXPECT_EQ(stack.top(), -321);
+  EXPECT_EQ(stack.empty(), false);
+  EXPECT_EQ(stack.size(), 3);
+
+  stack.pop();
+  // 0 1234567
+  EXPECT_EQ(stack.top(), 1234567);
+  EXPECT_EQ(stack.empty(), false);
+  EXPECT_EQ(stack.size(), 2);
+
+  stack.push(999);
+  // 0 1234567 999
+  EXPECT_EQ(stack.top(), 999);
+  EXPECT_EQ(stack.empty(), false);
+  EXPECT_EQ(stack.size(), 3);
+
+  stack.push(999);
+  // 0 1234567 999 999
+  EXPECT_EQ(stack.top(), 999);
+  EXPECT_EQ(stack.empty(), false);
+  EXPECT_EQ(stack.size(), 4);
+
+  stack.pop();
+  // 0 1234567 999
+  EXPECT_EQ(stack.top(), 999);
+  EXPECT_EQ(stack.empty(), false);
+  EXPECT_EQ(stack.size(), 3);
+
+  stack.pop();
+  // 0 1234567
+  EXPECT_EQ(stack.top(), 1234567);
+  EXPECT_EQ(stack.empty(), false);
+  EXPECT_EQ(stack.size(), 2);
+
+  stack.pop();
+  // 0
+  EXPECT_EQ(stack.top(), 0);
+  EXPECT_EQ(stack.empty(), false);
+  EXPECT_EQ(stack.size(), 1);
+
+  stack.pop();
+  EXPECT_EQ(stack.empty(), true);
+  EXPECT_EQ(stack.size(), 0);
+}
 
 //========================= STATIC STACK TESTS =================================
 TEST(StaticStackTest, TestCreationOfInt) {
 
-  StaticStack<int, 0> zero_stack;
+  // 0 is incorrect size.
   StaticStack<int, 1> stack0;
   StaticStack<int, 10> stack1;
   StaticStack<int, 100> stack2;
@@ -111,7 +111,6 @@ TEST(StaticStackTest, TestCreationOfInt) {
 
 TEST(StaticStackTest, TestCreationOfUserStruct) {
 
-  StaticStack<UserStruct, 0> zero_stack;
   StaticStack<UserStruct, 1> stack0;
   StaticStack<UserStruct, 10> stack1;
   StaticStack<UserStruct, 100> stack2;
@@ -202,6 +201,7 @@ TEST(StaticStackTest, TestPushInt) {
   EXPECT_EQ(stack.empty(), true);
   EXPECT_EQ(stack.size(), 0);
 }
+
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

@@ -1,9 +1,9 @@
 #ifndef STACK_HPP
 #define STACK_HPP
 
-#include <iostream>
 #define DUMP_LEVEL DUMP_ALL
 
+#include <iostream>
 #include <cstdint>
 #include <cstdlib>
 #include <cassert>
@@ -14,248 +14,14 @@
 #include "poison.h"
 #include "verifier.h"
 #include "dumptools.h"
-
-
-template <typename T>
-class DynamicStack;
-
-template <typename T, int N>
-class StaticStack;
-
-                                                                        // How to move it to another hpp? DynamicStack hinders.
-//==============================================================================
-template <typename T, int N>
-struct ProtectedData {
-
-  typedef size_t   size_type;
-  typedef uint64_t hash_type;
-
-  /// Left canary.
-  Canary l_canary_;
-
-  /// Hash of all elements. Used to checks buffer validity.
-  hash_type hash_;
-
-  /// Current number of elements.
-  size_type size_;
-
-  /// Max number of elements.
-  size_type capacity_;
-
-  T buffer_[N];
-
-   ProtectedData(size_t capacity);
-   ProtectedData(const ProtectedData& other);
-   ProtectedData(ProtectedData&&      other);
-
-  ~ProtectedData() = default;
-
-  // The method is overridden in derived classes.
-  const Canary& GetRCanary() const;
-};
-//.............................................................................
-template <typename T, int N>
-ProtectedData<T, N>::ProtectedData(size_t capacity)
-    : l_canary_(),
-      hash_(0),
-      size_(0),
-      capacity_(capacity) {
-
-  for (int i = 0; i < capacity_; ++i) {
-    buffer_[i] = Poison<T>();
-  }
-}
-
-template <typename T, int N>
-ProtectedData<T, N>::ProtectedData(const ProtectedData& other)
-    : l_canary_(),
-      hash_(0),
-      size_(other.size_),
-      capacity_(other.capacity_) {
-
-  for (int i = 0; i < size_; ++i) {
-    buffer_[i] = other.buffer_[i];
-  }
-
-  for (int i = size_; i < capacity_; ++i) {
-    buffer_[i] = Poison<T>();
-  }
-}
-
-template <typename T, int N>
-ProtectedData<T, N>::ProtectedData(ProtectedData&& other)
-    : l_canary_(),
-      hash_(0),
-      size_(other.size_),
-      capacity_(other.capacity_) {
-
-  for (int i = 0; i < size_; ++i) {
-    buffer_[i] = std::move(other.buffer_[i]);                                         // Should it be move_if_noexcept?
-  }
-
-  for (int i = size_; i < capacity_; ++i) {
-    buffer_[i] = Poison<T>();
-  }
-}
-
-
-
-//==============================================================================
-template <typename T>
-struct DynamicProtectedData : ProtectedData<T, 0> {
-
-   DynamicProtectedData(size_t capacity);
-   DynamicProtectedData(const DynamicProtectedData& other);
-   DynamicProtectedData(DynamicProtectedData&&      other);
-
-  ~DynamicProtectedData() = default;                                                    // Should it really be default?
-
-  // Delete ordinary new operator, for it works incorrect with this data.
-  static void* operator new(size_t size) = delete;
-  // Make a new specialization.
-  static void* operator new(size_t size, size_t capacity);
-  // Trivial delete.
-  static void  operator delete(void* ptr);                                    //Does it call D-tor on buffer_[1] .. buffer_[n]?
-
-  void  CreateRCanary();
-  const Canary& GetRCanary() const;
-};
-//.............................................................................
-template <typename T>
-DynamicProtectedData<T>::DynamicProtectedData(size_t capacity)
-    : ProtectedData<T, 0>(capacity) {
-  CreateRCanary();
-}
-
-template <typename T>
-DynamicProtectedData<T>::DynamicProtectedData(const
-                                              DynamicProtectedData& other)
-    : ProtectedData<T, 0>(other) {
-  CreateRCanary();
-}
-
-template <typename T>
-DynamicProtectedData<T>::DynamicProtectedData(DynamicProtectedData&& other)
-    : ProtectedData<T, 0>(std::move(other)) {
-  CreateRCanary();
-}
-
-template <typename T>
-void* DynamicProtectedData<T>::operator new(size_t size, size_t capacity) {
-//               unused argument------------------^ (but it is to be)
-  size_t full_size =
-      sizeof(DynamicProtectedData<T>) + sizeof(T) * capacity + sizeof(Canary);
-
-  return malloc(full_size);
-}
-
-template <typename T>
-void DynamicProtectedData<T>::operator delete(void* ptr) {
-  free(ptr);
-}
-
-template <typename T>
-void DynamicProtectedData<T>::CreateRCanary() {
-  // `this` is necessary to specialize scope while template inheritance.
-  ::new (ProtectedData<T, 0>::buffer_ + ProtectedData<T, 0>::capacity_)
-      Canary();
-}
-
-template <typename T>
-const Canary& DynamicProtectedData<T>::GetRCanary() const {
-  return *(Canary*)(
-      ProtectedData<T, 0>::buffer_ + ProtectedData<T, 0>::capacity_);
-}
-
-template <typename T>
-std::ostream& operator<<(std::ostream& out,
-                         const DynamicProtectedData<T>& data) {
-  // Print C-style array with PrintVecHelper from dumptools.h.
-  // Name it as we want to see it in a dump.
-  PrintVecHelper<T> buffer;
-  buffer.data_ = const_cast<T*>(data.buffer_);
-  buffer.size_ = data.size_;
-  buffer.capacity_ = data.capacity_;
-
-  OPEN_SCOPE();
-  DUMP_CONTAINER_STATE(out, &data, data.l_canary_,
-                                   data.hash_,
-                                   data.size_,
-                                   data.capacity_,
-                                   buffer);
-  CLOSE_SCOPE();
-}
-
-
-
-//==============================================================================
-template <typename T, int N>
-struct StaticProtectedData : ProtectedData<T, N> {
-
-  /// When stack overflows, next elements are pushed to dynamic stack.
-  DynamicStack<T>* dynamic_;
-
-  /// Right canary.
-  Canary r_canary_;
-
-   StaticProtectedData();
-   StaticProtectedData(const StaticProtectedData& other);
-   StaticProtectedData(StaticProtectedData&&      other);
-
-  ~StaticProtectedData() { delete dynamic_; }
-
-  const Canary& GetRCanary() const { return r_canary_; }
-};
-//.............................................................................
-template <typename T, int N>
-StaticProtectedData<T, N>::StaticProtectedData()
-    : ProtectedData<T, N>(N),
-      dynamic_(nullptr),
-      r_canary_() {}
-
-template <typename T, int N>
-StaticProtectedData<T, N>::StaticProtectedData(const
-                                               StaticProtectedData& other)
-    : ProtectedData<T, N>(other),
-      // Deep copy of dynamic stack.
-      dynamic_(new DynamicStack(*other.dynamic_)),
-      r_canary_() {}
-
-template <typename T, int N>
-StaticProtectedData<T, N>::StaticProtectedData(StaticProtectedData&& other)                        // Does default move make the same?
-    : ProtectedData<T, N>(std::move(other)),                                                       // Is std::move redundant?
-      dynamic_(other.dynamic_),  // Copy pointer.
-      r_canary_() {
-  // Null moved pointer.
-  other.dynamic_ = nullptr;
-}
-
-template <typename T, int N>
-std::ostream& operator<<(std::ostream& out,
-                         const StaticProtectedData<T, N>& data) {
-  // Print C-style array with PrintVecHelper from dumptools.h.
-  // Name it as we want to see it in a dump.
-  PrintVecHelper<T> buffer;
-  buffer.data_ = const_cast<T*>(data.buffer_);
-  buffer.size_ = data.size_;
-  buffer.capacity_ = data.capacity_;
-
-  OPEN_SCOPE();
-  DUMP_CONTAINER_STATE(out, &data, data.l_canary_,
-                                   data.hash_,
-                                   data.size_,
-                                   data.capacity_,
-                                   buffer,
-                                   data.dynamic_,
-                                   data.r_canary_);
-  CLOSE_SCOPE();
-}
-
+#include "protected_data.hpp"
 
 
 //==============================================================================
 template <typename T, class Container>
 class BaseStack {
+
+    ENABLE_VERIFICATION(std::cout);
 
   protected:
 
@@ -282,9 +48,9 @@ class BaseStack {
     ~BaseStack() = default;
 
     // Capacity methods.
-    bool      empty()    const { return size() == 0;   }
-    size_type size()     const { return GetSize();     }
-    size_type capacity() const { return GetCapacity(); }
+    virtual bool      empty()    const { return size() == 0; }
+    virtual size_type size()     const = 0;
+    virtual size_type capacity() const = 0;
 
     // Elements access.
           T& top();
@@ -295,15 +61,17 @@ class BaseStack {
     void emplace(T&& value);
     void pop();
 
+    // Dump.
+    void SetDumpStream();
+
   protected:
 
-    ENABLE_VERIFICATION();
+    virtual void IncrementSize() const = 0;
+    virtual void DecrementSize() const = 0;
 
     /* Getters. */
 
     hash_type&    GetHash()        const { return data_->hash_;        }
-    size_type&    GetSize()        const { return data_->size_;        }
-    size_type&    GetCapacity()    const { return data_->capacity_;    }
     const Canary& GetDataLCanary() const { return data_->l_canary_;    }
     const Canary& GetDataRCanary() const { return data_->GetRCanary(); }
 
@@ -444,26 +212,26 @@ const T& BaseStack<T, Container>::top() const {
 }
 
 template <typename T, class Container>
-void BaseStack<T, Container>::push(const T& value) { VERIFIED(std::cout);
+void BaseStack<T, Container>::push(const T& value) { VERIFIED();
 
   if (capacity() <= size()) {
     Reallocate();
   }
 
   Get(size()) = value;
-  ++GetSize();
+  IncrementSize();
 
   Update();
 }
 
 template <typename T, class Container>
-void BaseStack<T, Container>::pop() { VERIFIED(std::cout);
+void BaseStack<T, Container>::pop() { VERIFIED();
 
   // Do nothing when pop empty stack.
   if (empty()) return;
 
   top() = Poison<T>();
-  --GetSize();
+  DecrementSize();
 
   Update();
 }
@@ -474,11 +242,14 @@ void BaseStack<T, Container>::pop() { VERIFIED(std::cout);
 template <typename T>
 class DynamicStack : public BaseStack<T, DynamicProtectedData<T>> {
 
+    ENABLE_VERIFICATION(std::cout);
+
     typedef BaseStack<T, DynamicProtectedData<T>> Base;
 
   public:
 
     typedef typename Base::size_type size_type;
+    typedef typename Base::hash_type hash_type;
 
      /// If no capacity is specified, create Stack with capacity = 1.
      DynamicStack(size_t capacity = 1);
@@ -488,13 +259,22 @@ class DynamicStack : public BaseStack<T, DynamicProtectedData<T>> {
     // Delete allocated data.
     ~DynamicStack() { delete Base::data_; }
 
+    size_type size()     const { return Base::data_->size_;     }
+    size_type capacity() const { return Base::data_->capacity_; }
+
+    // Returns container pointer.
+    DynamicProtectedData<T>* data() const { return Base::data_; }
+
   protected:
 
-    ENABLE_VERIFICATION();
+    void IncrementSize() const { ++Base::data_->size_; }
+    void DecrementSize() const { --Base::data_->size_; }
 
     // Used in StaticStack::Get(i) implementation.
-    template <typename U, int N>
+    template <typename U, size_t N>
     friend class StaticStack;
+
+    void DoubleCapacity() const { this->data_->capacity_ *= 2; }
 
     /* Overridden methods. */
 
@@ -527,10 +307,10 @@ DynamicStack<T>::DynamicStack(DynamicStack&& other)
 
 template <typename T>
 void DynamicStack<T>::Reallocate() {
-  Base::GetCapacity() *= 2;
+  DoubleCapacity();
 
   DynamicProtectedData<T>* old = Base::data_;
-  Base::data_ = new (Base::capacity()) DynamicProtectedData<T>(*old);
+  Base::data_ = new (capacity()) DynamicProtectedData<T>(*old);
   delete old;
 }
 
@@ -547,9 +327,11 @@ const T& DynamicStack<T>::Get(size_type i) const {
 
 
 //==============================================================================
-template <typename T, int N>
+template <typename T, size_t N>
 class StaticStack : protected StaticProtectedData<T, N>,
                     public    BaseStack<T, StaticProtectedData<T, N>> {
+
+    ENABLE_VERIFICATION(std::cout);
 
     typedef BaseStack<T, StaticProtectedData<T, N>> Base;
 
@@ -563,11 +345,17 @@ class StaticStack : protected StaticProtectedData<T, N>,
 
     ~StaticStack() = default;
 
+    size_type size()     const;
+    size_type capacity() const;
+
   protected:
 
-    ENABLE_VERIFICATION();
-
     /* Overridden methods. */
+
+    void IncrementSize() const;
+    void DecrementSize() const;
+
+    bool OK(std::string& message) const;
 
     void     Reallocate()           override;
           T& Get(size_type i)       override;
@@ -575,7 +363,7 @@ class StaticStack : protected StaticProtectedData<T, N>,
 };
 //.............................................................................
 
-template <typename T, int N>
+template <typename T, size_t N>
 StaticStack<T, N>::StaticStack()
     : StaticProtectedData<T, N>(),
       // There is a hack: we cast pointer from a left data canary to
@@ -587,7 +375,7 @@ StaticStack<T, N>::StaticStack()
   Base::Update();
 }
 
-template <typename T, int N>
+template <typename T, size_t N>
 StaticStack<T, N>::StaticStack(const StaticStack& other)
     : StaticProtectedData<T, N>(other),
       Base(static_cast<StaticProtectedData<T, N>*>(this)) {
@@ -595,7 +383,7 @@ StaticStack<T, N>::StaticStack(const StaticStack& other)
   Base::Update();
 }
 
-template <typename T, int N>
+template <typename T, size_t N>
 StaticStack<T, N>::StaticStack(StaticStack&& other)
     : StaticProtectedData<T, N>(std::move(other)),
       Base(static_cast<StaticProtectedData<T, N>*>(this)) {
@@ -603,7 +391,38 @@ StaticStack<T, N>::StaticStack(StaticStack&& other)
   Base::Update();
 }
 
-template <typename T, int N>
+template <typename T, size_t N>
+typename StaticStack<T, N>::size_type
+StaticStack<T, N>::size() const {
+  return this->dynamic_ == nullptr ?
+      this->data_->size_ : this->data_->size_ + this->dynamic_->size();
+}
+
+template <typename T, size_t N>
+typename StaticStack<T, N>::size_type
+StaticStack<T, N>::capacity() const {
+  return this->dynamic_ == nullptr ? N : N + this->dynamic_->capacity();
+}
+
+template <typename T, size_t N>
+void StaticStack<T, N>::IncrementSize() const {
+  if (size() < N) {
+    ++this->data_->size_;
+  } else {
+    this->dynamic_->IncrementSize();
+  }
+}
+
+template <typename T, size_t N>
+void StaticStack<T, N>::DecrementSize() const {
+  if (size() <= N) {
+    --this->data_->size_;
+  } else {
+    this->dynamic_->DecrementSize();
+  }
+}
+
+template <typename T, size_t N>
 void StaticStack<T, N>::Reallocate() {
 
   if (this->dynamic_ == nullptr) {
@@ -611,20 +430,24 @@ void StaticStack<T, N>::Reallocate() {
   } else {
     this->dynamic_->Reallocate();
   }
-
-  Base::GetCapacity() = N + this->dynamic_->capacity();
 }
 
-template <typename T, int N>
+template <typename T, size_t N>
+bool StaticStack<T, N>::OK(std::string& message) const {
+  return this->dynamic_ == nullptr ?
+      Base::OK() : Base::OK() && this->dynamic_->OK();
+}
+
+template <typename T, size_t N>
 T& StaticStack<T, N>::Get(size_type i) {
   // If static capacity < element index then element is located in dynamic_.
-  return i < N ? this->buffer_[i] : this->dynamic_->Get(i - N);
+  return (i < N) ? this->buffer_[i] : this->dynamic_->Get(i - N);
 }
 
-template <typename T, int N>
+template <typename T, size_t N>
 const T& StaticStack<T, N>::Get(size_type i) const {
   // If static capacity < element index then element is located in dynamic_.
-  return i < N ? this->buffer_[i] : this->dynamic_->Get(i - N);
+  return (i < N) ? this->buffer_[i] : this->dynamic_->Get(i - N);
 }
 
 

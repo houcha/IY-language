@@ -1,3 +1,7 @@
+/*
+ * Colors are used in dumptools.h.
+ */
+
 #define RESET   "\033[0m"
 #define TINYBLACK   "\033[30m"      /* Black */
 #define TINYRED     "\033[31m"      /* Red */

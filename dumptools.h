@@ -2,36 +2,7 @@
  * @file dumptools.h
  * @date 2019-09-29
  *
- * @brief There are tools for containers and adapters dumping.
- *
- * Assume we want to enable dumping for class A which is an adapter:
- *
- *   struct A {
- *     std::vector<int> my_buffer;
- *
- *     A(int n) : my_buffer(n, 0) {}
- *
- *     void add_element(int elenemt) {
- *       my_buffer.push_back(element);
- *     }
- *   };
- *
- * Suppose we also want to dump its state every `add_element` method call using
- * this 'library'.
- *
- * First thing we should do is to define `buffer_` field (which is container)
- * like:
- *
- *   struct A {
- *
- *
- * Then create `bool OK()` and `void Dump()` methods.
- *
- * OK() returns ture if container is in good state (i.e. data is correct,
- * there is no memory leaks and etc.) and false otherwise.
- *
- * Dump(bool is_failure) should dump any info in file. If is_failure is true,
- * error is printed into file.
+ * @brief There are tools for containers dumping.
  *
  */
 
@@ -101,32 +72,32 @@ std::ostream& DumpVariables(std::ostream& out, const char* label,
 // OPEN/CLOSE_SCOPE are macros but no functions to avoid writing evident
 // std::ostream& out as an argument.
 
-#define OPEN_SCOPE()  \
-  out << '\n';\
+#define OPEN_SCOPE()                                                           \
+  out << '\n';                                                                 \
   cur_indent_gl += INDENT;
 
-#define CLOSE_SCOPE()  \
-  cur_indent_gl = std::string(  \
-      cur_indent_gl, 0, cur_indent_gl.size() - INDENT.size()); \
+#define CLOSE_SCOPE()                                                          \
+  cur_indent_gl = std::string(                                                 \
+      cur_indent_gl, 0, cur_indent_gl.size() - INDENT.size());                 \
   out << '\n' << cur_indent_gl;
 
-#define HAT() std::string(__FILE__) + std::string(" : ") +\
-              std::string(__func__) + std::string(" : ") +\
+#define HAT() std::string(__FILE__) + std::string(" : ") +                     \
+              std::string(__func__) + std::string(" : ") +                     \
               std::to_string(__LINE__)
 
 /// Dump container state (fields values) into out stream (e.g. file stream).
-#define DUMP_CONTAINER_STATE(out, container_ptr, /* Fields to dump */ ...)                               \
-                                                                            \
-  /* Header. */                                                                 \
-  char* class_name = GetClassTypeStr(container_ptr);                            \
-  out << cur_indent_gl << class_name << " [" << container_ptr << "]";   \
-  free(class_name);                                                           \
-                                                          \
-  OPEN_SCOPE(); \
-                                                          \
-  /* Fields. */\
-  DumpVariables(out, #__VA_ARGS__, __VA_ARGS__);           \
-                                                                            \
+#define DUMP_CONTAINER_STATE(out, container_ptr, /* Fields to dump */ ...)     \
+                                                                               \
+  /* Header. */                                                                \
+  char* class_name = GetClassTypeStr(container_ptr);                           \
+  out << cur_indent_gl << class_name << " [" << container_ptr << "]";          \
+  free(class_name);                                                            \
+                                                                               \
+  OPEN_SCOPE();                                                                \
+                                                                               \
+  /* Fields. */                                                                \
+  DumpVariables(out, #__VA_ARGS__, __VA_ARGS__);                               \
+                                                                               \
   CLOSE_SCOPE();
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -158,18 +129,17 @@ std::string Error(const std::string& str) {
 template <typename T>
 struct PrintVecHelper {
 
-  T* data_;
+  const T* data_;
   size_t size_;
   size_t capacity_;
 
   PrintVecHelper() = default;
 
-  // Only for containers support data(), size() and capacity().
-  template <typename Container>
-  PrintVecHelper(const Container& container)
-      : data_(container.data()),
-        size_(container.size()),
-        capacity_(container.capacity()) {}
+  template <typename ValueType>
+  PrintVecHelper(const ValueType* buffer, size_t size, size_t capacity)
+      : data_(buffer),
+        size_(size),
+        capacity_(capacity) {}
 };
 
 template <typename T>
@@ -194,7 +164,7 @@ std::ostream& operator<<(std::ostream& out, const PrintVecHelper<T>& helper) {
 
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const std::vector<T>& vector) {
-  return out << PrintVecHelper(vector);
+  return out << PrintVecHelper(vector.data(), vector.size(), vector.capacity());
 }
 
 template <typename T>
