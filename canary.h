@@ -2,7 +2,14 @@
 #define CANARY_H
 
 
-#define RANDOM_INT 12345                                                          // How to get compile-time random int?
+class Canary;
+
+/// Count Canary OK key.
+int GetCanaryOkKey(const Canary* canary) {
+  // Count according to canary address.
+  std::srand(reinterpret_cast<uint64_t>(canary));
+  return std::rand();
+}
 
 /**
  * @brief Signal if storing value is changed.
@@ -12,17 +19,16 @@ class Canary {
   private:
 
     int value_;
-    constexpr static int ok_key = RANDOM_INT + 10000;
 
   public:
 
-    Canary() : value_(ok_key) {}
+    Canary() : value_(GetCanaryOkKey(this)) {}
 
     // Do not copy canaries.
     Canary(const Canary&) = delete;
     Canary(Canary&&)      = delete;
 
-    bool OK() const { return value_ == ok_key; }
+    bool OK() const { return value_ == GetCanaryOkKey(this); }
 
   private:
 

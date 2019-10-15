@@ -22,6 +22,7 @@
 #include <cstring>
 #include <ostream>
 #include "color.h"
+#include "poison.h"
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -133,8 +134,6 @@ struct PrintVecHelper {
   size_t size_;
   size_t capacity_;
 
-  PrintVecHelper() = default;
-
   template <typename ValueType>
   PrintVecHelper(const ValueType* buffer, size_t size, size_t capacity)
       : data_(buffer),
@@ -151,6 +150,10 @@ std::ostream& operator<<(std::ostream& out, const PrintVecHelper<T>& helper) {
     char ch = (i < helper.size_) ? '*' : ' ';
 
     out << cur_indent_gl << ch << " [" << i << "] = " << helper.data_[i];
+
+    if (IsPoison(helper.data_[i])) {
+      out << "\t (POISON)";
+    }
 
     // If element is last, do not enter new line after it.
     // CLOSE_SCOPE makes it for us.

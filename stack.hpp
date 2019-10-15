@@ -119,7 +119,7 @@ template <typename T, class Container>
 bool BaseStack<T, Container>::CheckPoison() const {
 
   for (int i = size(); i < capacity(); ++i) {
-    if (Get(i) != Poison<T>()) {
+    if (!IsPoison(Get(i))) {
       return false;
     }
   }

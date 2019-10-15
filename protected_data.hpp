@@ -172,6 +172,8 @@ std::ostream& operator<<(std::ostream& out,
                                    data.capacity_,
                                    buffer);
   CLOSE_SCOPE();
+
+  return out;
 }
 
 
@@ -230,7 +232,7 @@ std::ostream& operator<<(std::ostream& out,
 
   OPEN_SCOPE();
   if (data.dynamic_ != nullptr) {
-    DynamicProtectedData<T> dynamic = *data.dynamic_->data();
+    DynamicProtectedData<T>& dynamic = *data.dynamic_->data();
 
     DUMP_CONTAINER_STATE(out, &data, data.l_canary_, data.hash_,
                                      data.size_,
@@ -247,6 +249,8 @@ std::ostream& operator<<(std::ostream& out,
                                      data.r_canary_);
   }
   CLOSE_SCOPE();
+
+  return out;
 }
 
 
