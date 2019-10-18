@@ -6,6 +6,18 @@ struct A {
   char b;
 };
 
+template<>
+A Poison<A>() {
+  A a;
+  a.a = 66666;
+  a.b = 25;
+  return a;
+}
+
+bool operator==(const A& a, const A& b) {
+  return a.a == b.a && a.b == b.b;
+}
+
 std::ostream& operator<<(std::ostream& out, A a) {
   out << a.a << ' ' << a.b;
   return out;

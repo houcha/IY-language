@@ -3,8 +3,23 @@
 
 #include <cstdlib>
 
+template <typename T>
+T Poison();
 
 /// Return true if value is Poison.
+template <typename T>
+bool IsPoison(const T& value) {
+  return value == Poison<T>();
+}
+
+/// Assign value with poison.
+template <typename T>
+void SetPoison(T& value) {
+  value = Poison<T>();
+}
+
+/* Possible (but not workable) implementations:
+
 template <typename T>
 bool IsPoison(const T& value) {
 
@@ -19,7 +34,7 @@ bool IsPoison(const T& value) {
   return true;
 }
 
-/// Set poison bytes to value.
+
 template <typename T>
 void SetPoison(T& value) {
 
@@ -30,6 +45,7 @@ void SetPoison(T& value) {
   }
 }
 
+*/
 
 #endif // POISON_H
 
