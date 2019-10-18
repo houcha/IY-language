@@ -2,7 +2,7 @@ CXXFLAGS = -std=c++17
 STATIC_CHECK_FLAGS = -Wall -Wextra -pedantic
 
 
-SRC = main.cpp
+SRC = new_test.cpp
 
 all:
 	$(CXX) $(CXXFLAGS) -o main.exe $(SRC)
