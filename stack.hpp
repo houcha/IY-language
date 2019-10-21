@@ -10,10 +10,10 @@
 #include <utility>
 #include <string>
 #include <string_view>
-#include "canary.h"
-#include "poison.h"
-#include "verifier.h"
-#include "dumptools.h"
+#include "canary.hpp"
+#include "poison.hpp"
+#include "verifier.hpp"
+#include "dumptools.hpp"
 #include "protected_data.hpp"
 
 

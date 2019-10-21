@@ -47,6 +47,7 @@ ProtectedData<T, N>::ProtectedData(ProtectedData&& other)
 
 template <typename T, size_t N>
 ProtectedData<T, N>& ProtectedData<T, N>::operator=(const ProtectedData& other) {
+  if (this == &other) return *this;
   assert(capacity_ == other.capacity_);
 
   for (int i = 0; i < other.size_; ++i) {
@@ -62,6 +63,7 @@ ProtectedData<T, N>& ProtectedData<T, N>::operator=(const ProtectedData& other) 
 
 template <typename T, size_t N>
 ProtectedData<T, N>& ProtectedData<T, N>::operator=(ProtectedData&& other) {
+  if (this == &other) return *this;
   assert(capacity_ == other.capacity_);
 
   for (int i = 0; i < other.size_; ++i) {
@@ -100,6 +102,7 @@ DynamicProtectedData<T>::DynamicProtectedData(DynamicProtectedData&& other)
 template <typename T>
 DynamicProtectedData<T>&
 DynamicProtectedData<T>::operator=(const DynamicProtectedData& other) {
+  if (this == &other) return *this;
   // Just call base class operator=.
   ProtectedData<T, 0>::operator=(other);
 
@@ -109,6 +112,7 @@ DynamicProtectedData<T>::operator=(const DynamicProtectedData& other) {
 template <typename T>
 DynamicProtectedData<T>&
 DynamicProtectedData<T>::operator=(DynamicProtectedData&& other) {
+  if (this == &other) return *this;
 
   ProtectedData<T, 0>::operator=(std::move(other));
 
@@ -196,7 +200,8 @@ StaticProtectedData<T, N>::StaticProtectedData(StaticProtectedData&& other)     
 template <typename T, size_t N>
 StaticProtectedData<T, N>&
 StaticProtectedData<T, N>::operator=(const StaticProtectedData& other) {
-  // call base class operator=.
+  if (this == &other) return *this;
+  // Call base class operator=.
   ProtectedData<T, 0>::operator=(other);
 
   delete dynamic_;
@@ -208,6 +213,7 @@ StaticProtectedData<T, N>::operator=(const StaticProtectedData& other) {
 template <typename T, size_t N>
 StaticProtectedData<T, N>&
 StaticProtectedData<T, N>::operator=(StaticProtectedData&& other) {
+  if (this == &other) return *this;
   // call base class operator=.
   ProtectedData<T, 0>::operator=(std::move(other));
 

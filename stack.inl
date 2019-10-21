@@ -19,6 +19,7 @@ BaseStack<T, Container>::BaseStack(BaseStack&& other)
 template <typename T, class Container>
 BaseStack<T, Container>&
 BaseStack<T, Container>::operator=(BaseStack&& other) {
+  if (this == &other) return *this;
 
   data_ = other.data_;
   other.data_ = nullptr;
@@ -179,6 +180,7 @@ DynamicStack<T>::DynamicStack(DynamicStack&& other)
 
 template <typename T>
 DynamicStack<T>& DynamicStack<T>::operator=(const DynamicStack& other) {
+  if (this == &other) return *this;
 
   delete this->data_;
   this->data_ = new (other.capacity()) DynamicProtectedData<T>(other.data_);
@@ -190,6 +192,8 @@ DynamicStack<T>& DynamicStack<T>::operator=(const DynamicStack& other) {
 
 template <typename T>
 DynamicStack<T>& DynamicStack<T>::operator=(DynamicStack&& other) {
+  if (this == &other) return *this;
+
   // Call base class operator=.
   Base::operator=(std::move(other));
 
@@ -252,6 +256,7 @@ StaticStack<T, N>::StaticStack(StaticStack&& other)
 
 template <typename T, size_t N>
 StaticStack<T, N>& StaticStack<T, N>::operator=(const StaticStack& other) {
+  if (this == &other) return *this;
 
   // Copy buffer.
   StaticProtectedData<T, N>::operator=(other);
@@ -263,6 +268,7 @@ StaticStack<T, N>& StaticStack<T, N>::operator=(const StaticStack& other) {
 
 template <typename T, size_t N>
 StaticStack<T, N>& StaticStack<T, N>::operator=(StaticStack&& other) {
+  if (this == &other) return *this;
 
   StaticProtectedData<T, N>::operator=(std::move(other));
   Base::operator=(std::move(other));

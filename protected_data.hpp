@@ -3,9 +3,9 @@
 
 #include <cstdint>
 #include <utility>
-#include "canary.h"
-#include "poison.h"
-#include "dumptools.h"
+#include "canary.hpp"
+#include "poison.hpp"
+#include "dumptools.hpp"
 
 
 template <typename T>
