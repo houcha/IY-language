@@ -1,28 +1,45 @@
-CXXFLAGS = -std=c++17
-STATIC_CHECK_FLAGS = -Wall -Wextra -pedantic
+CXX_FLAGS = -std=c++17
+CHECK_FLAGS = -Wall -pedantic
 
-SRC = main.cpp text/text.cpp assembler.cpp
-
-all:
-	$(CXX) $(CXXFLAGS) -o main.exe $(SRC)
-	./main.exe
+SUBDIR = src
 
 
-debug:
-	$(CXX) $(CXXFLAGS) $(STATIC_CHECK_FLAGS) -g -o debug.exe $(SRC)
-	gdb debug.exe --tui
+generate_code:
+	python $(SUBDIR)/command_generator.py
 
 
-TEST_SRC = test.cpp
-# Add -lgtest_main -lpthread flags if test target does not compile.
-GTEST_FLAGS = -lgtest
-GTEST_PATH = /usr/include/gtest/ -L /usr/lib/
+%.o: %.cpp
+	$(CXX) -c -o $@ $< $(CXX_FLAGS)
 
-test:
-	$(CXX) $(CXXFLAGS) $(STATIC_CHECK_FLAGS) -o test.exe $(TEST_SRC) -I $(GTEST_PATH) $(GTEST_FLAGS)
-	./test.exe
+$(SUBDIR)/%.o: $(SUBDIR)/%.cpp
+	$(CXX) -c -o $@ $< $(CXX_FLAGS)
 
+
+compile: compile.o\
+$(SUBDIR)/assembler.o $(SUBDIR)/text.o
+	$(CXX) -o $@ $^ $(CXX_FLAGS)
+
+run: run.o\
+$(SUBDIR)/processor.hpp $(SUBDIR)/text.o $(SUBDIR)/disassembler.o
+	$(CXX) -o $@ $^ $(CXX_FLAGS)
+
+disassembly: disassembly.o\
+$(SUBDIR)/disassembler.o $(SUBDIR)/text.o
+	$(CXX) -o $@ $^ $(CXX_FLAGS)
+
+
+build: generate_code compile run disassembly
+	echo
+
+
+debug_run: generate_code run.o\
+$(SUBDIR)/processor.hpp $(SUBDIR)/text.o $(SUBDIR)/disassembler.o
+	$(CXX) -o $@ -g $^ $(CXX_FLAGS) $(CHECK_FLAGS)
+
+
+.PHONY: clean
 
 clean:
-	rm main.exe debug.exe test.exe
+	find . -type f -name '*.o' -delete
+	rm compile run disassembly debug_run
 
