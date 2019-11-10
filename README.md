@@ -1,3 +1,1 @@
-# dedinskiy-course
-
-Onegin problem solution.
+# 'Onegin' task.
