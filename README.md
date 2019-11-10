@@ -1,5 +1,3 @@
-# dedinskiy-course
+# 'Stable' stack.
 
-Stable stack.
-
-See docs at html/index.html.
+'Stable' stack is a stack with extra defence. It dumps state if something goes wrong with its data.
