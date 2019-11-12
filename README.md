@@ -1,6 +1,6 @@
 # IY-language
 
-In this project I develop my own `IY` language.
+Here I develop my own `IY` language.
 
 Currently language development is in progress.
 
