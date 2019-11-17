@@ -1,6 +1,6 @@
 # Processor.
 
-ASM x86-like emulation program.
+ASM-like language compiler.
 
 To build processor use `make build`. It generates necessary C++ code and executable files: `compile`, `run` and `disassembly`.
 The `.asm` files (which are processor programs) located in `asm` directory. They can be executed in two actions:
