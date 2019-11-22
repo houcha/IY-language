@@ -1,4 +1,5 @@
 #include "text.hpp"
+#include <cassert>
 
 
 int GetFileSize(FILE* file) {

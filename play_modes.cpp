@@ -22,12 +22,22 @@ void ReadString(char* string, bool get_char = true) {
   }
 }
 
-void FixString(char* string, bool is_question) {
+// Return true is string has negative meaning.
+bool FixString(char*& string, bool is_question) {
+  bool is_negative = false;
+  if (is_question) {
+    size_t no_len = strlen("не ");
+    if (memcmp(string, "не ", no_len) == 0) {
+      string += no_len;
+      is_negative = true;
+    }
+  }
   for (size_t i = 0; string[i] != 0; ++i) {
     if (string[i] == '"') {
       string[i] = '\'';
     }
   }
+  return is_negative;
 }
 
 void AddNewObject(DecisionTree& tree, DecisionTree::value_type* node) {
@@ -39,16 +49,16 @@ void AddNewObject(DecisionTree& tree, DecisionTree::value_type* node) {
   ReadString(new_name);
   FixString(new_name, false);
   new_leaf->str_ = std::string_view(new_name);
-  printf("Какой \"%.*s\" по сравнению с \"%.*s\"?\n\
-Введи предложение, на которое можно ответить 'да' или 'нет': ",
+  printf("Какой \"%.*s\" по сравнению с \"%.*s\"?\n"
+      "Введи предложение, на которое можно ответить 'да' или 'нет': ",
       static_cast<int>(node->str_.size()), node->str_.data(),
       static_cast<int>(new_leaf->str_.size()), new_leaf->str_.data());
   char* feature = (char*)calloc(MAX_STR_LEN, sizeof(char));
   ReadString(feature, false);
-  FixString(feature, true);
+  bool is_negative = FixString(feature, true);
   size_t len = strlen(feature);
   feature[len] = '?';
-  new_query->str_ = std::string_view(feature, len + 1);
+  new_query->str_ = std::string_view(feature, len + 1); // +1 is extra '?'.
 
   if (node->IsLeftChild()) {
     node->parent_->left_ = new_query;
@@ -56,6 +66,9 @@ void AddNewObject(DecisionTree& tree, DecisionTree::value_type* node) {
     node->parent_->right_ = new_query;
   }
   new_query->parent_ = node->parent_;
+  if (is_negative) {
+    swap(new_left, node);
+  }
   tree.AddChild(new_query, node);
   tree.AddChild(new_query, new_leaf);
 }

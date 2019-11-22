@@ -1,16 +1,7 @@
 #ifndef TEXT_HPP
 #define TEXT_HPP
 
-/**
- * @file text.h
- * @brief Text class.
- * @date 2019-11-07
- */
-
-#include <cassert>
 #include <string>
-#include <string_view>
-#include <vector>
 
 
 /// Return file size.

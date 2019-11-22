@@ -1,7 +1,6 @@
 CXXFLAGS = -std=c++17
 STATIC_CHECK_FLAGS = -Wall -Wextra -pedantic
 OBJS = main.o text.o tree_dump.o play_modes.o
-DEPS = node.hpp binary_tree.hpp binary_tree_it.hpp
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
@@ -10,10 +9,10 @@ DEPS = node.hpp binary_tree.hpp binary_tree_it.hpp
 %.g.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(STATIC_CHECK_FLAGS) -g -c -o $@ $<
 
-main: $(OBJS) $(DEPS)
+main: $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-debug: $(OBJS:.o=.g.o) $(DEPS)
+debug: $(OBJS:.o=.g.o)
 	$(CXX) $(CXXFLAGS) $(STATIC_CHECK_FLAGS) -g -o $@ $^
 
 

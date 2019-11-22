@@ -1,7 +1,7 @@
 #ifndef BINARY_TREE_HPP
 #define BINARY_TREE_HPP
 
-#include "bin_tree_iter.hpp"
+#include "binary_tree_it.hpp"
 
 
 template <typename Node_t>
@@ -25,12 +25,17 @@ class BinaryTree {
 
    ~BinaryTree();
 
-    size_t Size() { return count_nodes_; }
+    size_t      Size()    { return count_nodes_; }
+    value_type* GetRoot() { return root_; }
 
     template <typename IteratorType = PreOrderIterator<value_type>>
     IteratorType Begin() { return IteratorType(root_); }
     template <typename IteratorType = PreOrderIterator<value_type>>
     IteratorType End()   { return IteratorType(nullptr); }
+    template <typename IteratorType = PreOrderIterator<value_type>>
+    IteratorType Begin() const { return IteratorType(root_); }
+    template <typename IteratorType = PreOrderIterator<value_type>>
+    IteratorType End()   const { return IteratorType(nullptr); }
 };
 
 #include "binary_tree.inl"

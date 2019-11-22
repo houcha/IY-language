@@ -1,40 +1,73 @@
+#include <stack>
+#include <string_view>
+
+
 template <typename String>
 DecisionTree::DecisionTree(const String& buffer)
-    : BinaryTree() {
+    : DecisionTree() {
+  ParseString(buffer);
+}
 
+template <typename String>
+void DecisionTree::ParseString(const String& buffer) {
   std::stack<QueryNode*> unassigned_nodes;
-  unassigned_nodes.push(root_);
 
-  size_t query_begin = 0;
-  size_t query_end   = 0;
+  bool has_open_quote = false;
+  // Points to open quote.
+  const char* str_begin = nullptr;
+  // Points to close quote.
+  const char* str_end = nullptr;
 
-  size_t buffer_size = buffer.size();
-  for (size_t i = 0; i < buffer_size; ++i) {
-    if (buffer[i] == '(' || buffer[i] == ')') {
-      query_end = i - 1;
-      size_t query_length = query_end - query_begin + 1;
-      if (query_length > 0) {
-        (*unassigned_nodes.top()).query_ =
-            std::string_view(buffer.data() + query_begin, query_length);
-      }
-      query_begin = i + 1;
-      if (buffer[i] == '(') {
-        QueryNode* new_node = new QueryNode();
-        AddNode(unassigned_nodes.top(), new_node);
-        unassigned_nodes.push(new_node);
-      } else {   // buffer[i] == ')'
-        unassigned_nodes.pop();
-      }
+  for (size_t i = 0; i < buffer.size(); ++i) {
+    switch(buffer[i]) {
+      case '{':
+        {
+          if (unassigned_nodes.empty()) {
+            unassigned_nodes.push(root_);
+          } else {
+            QueryNode* new_node = new QueryNode();
+            AddChild(unassigned_nodes.top(), new_node);
+            unassigned_nodes.push(new_node);
+          }
+          break;
+        }
+      case '}':
+        {
+          unassigned_nodes.pop();
+          break;
+        }
+      case '"':
+        {
+          if (has_open_quote) {
+            has_open_quote = false;
+            str_end = buffer.data() + i;
+            (*unassigned_nodes.top()).str_ =
+                std::string_view(str_begin + 1, str_end - str_begin - 1);
+          } else {
+            has_open_quote = true;
+            str_begin = buffer.data() + i;
+          }
+          break;
+        }
     }
   }
 }
 
-void DecisionTree::AddNode(QueryNode* parent, QueryNode* son) {
-  if (parent->left_ == nullptr) {
-    parent->left_ = son;
-  } else {
-    parent->right_ = son;
-  }
-  ++count_nodes_;
+template <typename IteratorType>
+IteratorType DecisionTree::Begin() {
+  return BinaryTree<QueryNode>::Begin<IteratorType>();
+}
+template <typename IteratorType>
+IteratorType DecisionTree::End() {
+  return BinaryTree<QueryNode>::End<IteratorType>();
+}
+
+template <typename IteratorType>
+IteratorType DecisionTree::Begin() const {
+  return BinaryTree<QueryNode>::Begin<IteratorType>();
+}
+template <typename IteratorType>
+IteratorType DecisionTree::End() const {
+  return BinaryTree<QueryNode>::End<IteratorType>();
 }
 
