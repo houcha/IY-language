@@ -12,6 +12,8 @@ void PlayDefinition(DecisionTree& tree);
 void PlayDifference(DecisionTree& tree);
 void PlayShowAll(DecisionTree& tree);
 
+char GetCorrectAnswer();
+
 
 #endif // PLAY_MODES_HPP
 

@@ -4,13 +4,13 @@
 #include "text.hpp"
 #include "decision_tree.hpp"
 #include "tree_dump.hpp"
+#include "strview_out.hpp"
 
 
 template <typename Node>
-void WriteNode(Node* node, char* indent, ssize_t indent_size, FILE* file) {
-  fprintf(file, "\n%.*s{\"%.*s\"",
-      static_cast<int>(indent_size), indent,
-      static_cast<int>(node->str_.size()), node->str_.data());
+void WriteNode(Node* node, char* indent, int indent_size, FILE* file) {
+  fprintf(file, "\n%.*s{\"" STRVIEW "\"",
+      indent_size, indent, VIEW(node->str_));
   if (!node->IsLeaf()) {
     WriteNode(node->right_, indent, indent_size + 1, file);
     WriteNode(node->left_, indent, indent_size + 1, file);
@@ -67,15 +67,18 @@ int main() {
           PlayShowAll(tree);
           break;
       default:
-          printf("Неверный номер режима.\n");
-          printf("Нажми 0, чтобы обратиться за помощью.\n");
+          printf("Неверный номер режима.\n"
+                 "Нажми 0, чтобы обратиться за помощью.\n");
     }
-    printf("Хочешь продолжить?\nОтвет(y/n): ");
-    getchar(); // Skip trailing \n.
-    char confirm = getchar();
-    if (confirm == 'n') {
-      exit = 1;
-    }
+    printf("Хочешь продолжить?\nОтвет(y/n): "); getchar();
+    if (GetCorrectAnswer() == 'n') { exit = 1; }
+  }
+
+  printf("Сохранить изменения?\nОтвет(y/n): "); getchar();
+  if (GetCorrectAnswer() == 'y') {
+    FILE* save_file = fopen("database.txt", "w");
+    SaveTree(tree, save_file);
+    fclose(save_file);
   }
 
   printf("Ты заходи, если что...\n");
@@ -83,10 +86,6 @@ int main() {
   FILE* dump_file = fopen("graph.dot", "w");
   DumpTree(tree, dump_file);
   fclose(dump_file);
-
-  FILE* save_file = fopen("database.txt", "w");
-  SaveTree(tree, save_file);
-  fclose(save_file);
 
   return 0;
 }
