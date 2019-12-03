@@ -23,7 +23,7 @@ class BinaryTreeIterator {
   public:
 
     BinaryTreeIterator(pointer root)
-      : current_(root) {}
+        : current_(root) {}
 
     virtual BinaryTreeIterator& operator++() = 0;
 
@@ -84,7 +84,9 @@ class PreOrderIterator : public DFSIterator<Node_t> {
       typename DFSIterator<Node_t>::iterator_category iterator_category;
 
     PreOrderIterator(pointer root)
-        : DFSIterator<Node_t>(root) { PushChildren(root); }
+        : DFSIterator<Node_t>(root) {
+      PushChildren(root);
+    }
 
     // In-place because templates makes outer implementation too big.
     BinaryTreeIterator<Node_t>& operator++() override {
@@ -100,11 +102,11 @@ class PreOrderIterator : public DFSIterator<Node_t> {
   private:
     void PushChildren(pointer node) {
       if (node == nullptr) return;
-      if (node->right_ != nullptr) {
-        this->dfs_.push(node->right_);
+      if (node->GetRight() != nullptr) {
+        this->dfs_.push(node->GetRight());
       }
-      if (node->left_  != nullptr) {
-        this->dfs_.push(node->left_);
+      if (node->GetLeft()  != nullptr) {
+        this->dfs_.push(node->GetLeft());
       }
     }
 };

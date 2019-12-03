@@ -1,73 +1,71 @@
 #include <stack>
-#include <string_view>
+#include "node/create_node.hpp"
 
 
 template <typename String>
-DecisionTree::DecisionTree(const String& buffer)
-    : DecisionTree() {
-  ParseString(buffer);
+ExprTree::ExprTree(const String& buffer) {
+  ParseInput(buffer);
 }
 
 template <typename String>
-void DecisionTree::ParseString(const String& buffer) {
-  std::stack<QueryNode*> unassigned_nodes;
+void ExprTree::ParseInput(const String& buffer) {
+  std::stack<MathNode*> unassigned_nodes;
 
-  bool has_open_quote = false;
-  // Points to open quote.
-  const char* str_begin = nullptr;
-  // Points to close quote.
-  const char* str_end = nullptr;
+  const char* lexeme_begin = buffer.data();
+  const char* lexeme_end   = lexeme_begin;
+  const char* buffer_end = lexeme_begin + buffer.size();
 
-  for (size_t i = 0; i < buffer.size(); ++i) {
-    switch(buffer[i]) {
-      case '{':
-        {
-          if (unassigned_nodes.empty()) {
-            unassigned_nodes.push(root_);
-          } else {
-            QueryNode* new_node = new QueryNode();
-            AddChild(unassigned_nodes.top(), new_node);
-            unassigned_nodes.push(new_node);
-          }
-          break;
+  for (const char* current = lexeme_begin; current < buffer_end; ++current) {
+    if (*current == '(' || *current == ')') {
+      // Add lexeme.
+      lexeme_end = current - 1;
+      if (lexeme_end - lexeme_begin >= 0) {
+        MathNode* tmp = unassigned_nodes.top();
+        unassigned_nodes.pop();
+        MathNode* new_node = CreateNode(lexeme_begin, lexeme_end);
+        unassigned_nodes.push(new_node);
+        if (new_node != nullptr) {
+          ReplaceNode(tmp, new_node);
         }
-      case '}':
-        {
-          unassigned_nodes.pop();
-          break;
+        delete tmp; // Delete old (temporary) node.
+      }
+      // Create or delete tree node.
+      if (*current == '(') {
+        if (unassigned_nodes.empty()) {
+          root_ = new EmptyNode;
+          unassigned_nodes.push(root_);
+        } else {
+          // Create empty node, since the real type of MathNode is unknown
+          // until input string is given.
+          MathNode* tmp = new EmptyNode;
+          AddChild(unassigned_nodes.top(), tmp);
+          unassigned_nodes.push(tmp);
         }
-      case '"':
-        {
-          if (has_open_quote) {
-            has_open_quote = false;
-            str_end = buffer.data() + i;
-            (*unassigned_nodes.top()).str_ =
-                std::string_view(str_begin + 1, str_end - str_begin - 1);
-          } else {
-            has_open_quote = true;
-            str_begin = buffer.data() + i;
-          }
-          break;
-        }
+      } else { // *current == ')'
+        unassigned_nodes.pop();
+      }
+      lexeme_begin = current + 1;
     }
   }
 }
 
 template <typename IteratorType>
-IteratorType DecisionTree::Begin() {
-  return BinaryTree<QueryNode>::Begin<IteratorType>();
-}
-template <typename IteratorType>
-IteratorType DecisionTree::End() {
-  return BinaryTree<QueryNode>::End<IteratorType>();
+IteratorType ExprTree::Begin() {
+  return BinaryTree<MathNode>::Begin<IteratorType>();
 }
 
 template <typename IteratorType>
-IteratorType DecisionTree::Begin() const {
-  return BinaryTree<QueryNode>::Begin<IteratorType>();
+IteratorType ExprTree::End() {
+  return BinaryTree<MathNode>::End<IteratorType>();
 }
+
 template <typename IteratorType>
-IteratorType DecisionTree::End() const {
-  return BinaryTree<QueryNode>::End<IteratorType>();
+IteratorType ExprTree::Begin() const {
+  return BinaryTree<MathNode>::Begin<IteratorType>();
+}
+
+template <typename IteratorType>
+IteratorType ExprTree::End() const {
+  return BinaryTree<MathNode>::End<IteratorType>();
 }
 

@@ -2,22 +2,23 @@
 #define EXPRESSION_TREE_HPP
 
 #include "binary_tree.hpp"
-#include "node.hpp"
+#include "node/math_node.hpp"
 
 
-class ExprTree : BinaryTree<Node> {
+class ExprTree : BinaryTree<MathNode> {
 
   public:
 
-    typedef BinaryTree<Node>::value_type value_type;
+    typedef BinaryTree<MathNode>::value_type value_type;
 
-    ExprTree() : BinaryTree<Node>() {}
-   ~ExprTree() = default;
+    ExprTree() {}
+    ExprTree(MathNode* node);
+    template <typename String>
+    ExprTree(const String& buffer);
+    ~ExprTree() = default;
 
           value_type* GetRoot()       { return this->root_; }
     const value_type* GetRoot() const { return this->root_; }
-
-
 
     template <typename IteratorType = PreOrderIterator<value_type>>
     IteratorType Begin();
@@ -28,20 +29,20 @@ class ExprTree : BinaryTree<Node> {
     template <typename IteratorType = PreOrderIterator<value_type>>
     IteratorType End()   const;
 
-    ExprTree Differentiate() const;
+    ExprTree Differentiate(const char* var) const;
+
+    void AddChild(value_type* parent, value_type* son);
 
   private:
 
-    void AddChild(Node* parent, Node* son) {
-      if (parent->right_ == nullptr) {
-        parent->right_ = son;
-      } else {
-        parent->left_ = son;
-      }
-      son->parent_ = parent;
-      ++count_nodes_;
-    }
+    template <typename String>
+    void ParseInput(const String& buffer);
+    /// Change `replaced` node to `new_node` in the tree.
+    /// Do not delete old node.
+    void ReplaceNode(MathNode* replaced, MathNode* new_node);
 };
+
+#include "expression_tree.inl"
 
 
 #endif // EXPRESSION_TREE_HPP

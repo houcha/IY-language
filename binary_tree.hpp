@@ -20,8 +20,8 @@ class BinaryTree {
   public:
 
     BinaryTree()
-        : root_       (new Node_t),
-          count_nodes_(1) {}
+        : root_       (nullptr),
+          count_nodes_(0) {}
 
    ~BinaryTree();
 
