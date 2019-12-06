@@ -13,16 +13,21 @@ class ConstNode : public MathNode {
 
   public:
 
-    ConstNode(T value)                : value_(value)        {}
-    ConstNode(const ConstNode& other) : value_(other.value_) {}
+    ConstNode(T value)                : value_(value)        { Update(); }
+    ConstNode(const ConstNode& other) : value_(other.value_) { Update(); }
 
-    MathNode* Differentiate(const char* var) const override;
+    uint8_t GetPriority() const override;
+    T       GetValue()    const;
 
   protected:
 
-    MathNode*         CopyThis()  const override;
-    const std::string GetString() const override;
-    const char*       GetColor()  const override;
+    void DumpDiffThis(const char* var, FILE* texfile) const override;
+
+    MathNode*         DiffThis(const char* var, FILE* texfile) const override;
+    MathNode*         CopyThis()          const override;
+    uint32_t          GetThisComplexity() const override;
+    const std::string GetString()         const override;
+    const char*       GetColor()          const override;
 };
 
 #include "const_node.inl"

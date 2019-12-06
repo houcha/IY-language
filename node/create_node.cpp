@@ -57,26 +57,26 @@ MathNode* CreateNode(const char* begin, const char* end) {
   int tmp = 0; // Temporary variable.
 
 
+  if (strncmp(begin, "+", length) == 0) {
+    return new OperatorAddNode;
+  } else
+  if (strncmp(begin, "-", length) == 0) {
+    return new OperatorSubNode;
+  } else
+  if (strncmp(begin, "*", length) == 0) {
+    return new OperatorMulNode;
+  } else
+  if (strncmp(begin, "/", length) == 0) {
+    return new OperatorDivNode;
+  } else
+  if (strncmp(begin, "sin", length) == 0) {
+    return new OperatorSinNode;
+  } else
   if (strncmp(begin, "cos", length) == 0) {
     return new OperatorCosNode;
   } else
   if (strncmp(begin, "tan", length) == 0) {
     return new OperatorTanNode;
-  } else
-  if (strncmp(begin, "+", length) == 0) {
-    return new OperatorAddNode;
-  } else
-  if (strncmp(begin, "*", length) == 0) {
-    return new OperatorMulNode;
-  } else
-  if (strncmp(begin, "-", length) == 0) {
-    return new OperatorSubNode;
-  } else
-  if (strncmp(begin, "sin", length) == 0) {
-    return new OperatorSinNode;
-  } else
-  if (strncmp(begin, "/", length) == 0) {
-    return new OperatorDivNode;
   } else
   if (strncmp(begin, "cot", length) == 0) {
     return new OperatorCotNode;

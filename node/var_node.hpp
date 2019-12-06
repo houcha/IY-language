@@ -12,16 +12,19 @@ class VarNode : public MathNode {
 
   public:
 
-    VarNode(const char* str, size_t len) : name_(str, len)    {}
-    VarNode(const VarNode& other)        : name_(other.name_) {}
+    VarNode(const char* str, size_t len) : name_(str, len)    { Update(); }
+    VarNode(const VarNode& other)        : name_(other.name_) { Update(); }
 
-    MathNode* Differentiate(const char* var) const override;
+    uint8_t GetPriority() const override;
 
   protected:
 
-    MathNode*         CopyThis()  const override;
-    const std::string GetString() const override;
-    const char*       GetColor()  const override;
+    void DumpDiffThis(const char* var, FILE* texfile) const override;
+    MathNode*         DiffThis(const char* var, FILE* texfile) const override;
+    MathNode*         CopyThis()          const override;
+    uint32_t          GetThisComplexity() const override;
+    const std::string GetString()         const override;
+    const char*       GetColor()          const override;
 };
 
 

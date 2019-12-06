@@ -85,7 +85,7 @@ class PreOrderIterator : public DFSIterator<Node_t> {
 
     PreOrderIterator(pointer root)
         : DFSIterator<Node_t>(root) {
-      PushChildren(root);
+      PushChild(root);
     }
 
     // In-place because templates makes outer implementation too big.
@@ -94,13 +94,13 @@ class PreOrderIterator : public DFSIterator<Node_t> {
         this->current_ = nullptr;
       } else {
         this->current_ = this->dfs_.top(); this->dfs_.pop();
-        PushChildren(this->current_);
+        PushChild(this->current_);
       }
       return *this;
     }
 
   private:
-    void PushChildren(pointer node) {
+    void PushChild(pointer node) {
       if (node == nullptr) return;
       if (node->GetRight() != nullptr) {
         this->dfs_.push(node->GetRight());

@@ -17,8 +17,8 @@ class ExprTree : BinaryTree<MathNode> {
     ExprTree(const String& buffer);
     ~ExprTree() = default;
 
-          value_type* GetRoot()       { return this->root_; }
-    const value_type* GetRoot() const { return this->root_; }
+          value_type* GetRoot()       { return root_; }
+    const value_type* GetRoot() const { return root_; }
 
     template <typename IteratorType = PreOrderIterator<value_type>>
     IteratorType Begin();
@@ -29,7 +29,9 @@ class ExprTree : BinaryTree<MathNode> {
     template <typename IteratorType = PreOrderIterator<value_type>>
     IteratorType End()   const;
 
-    ExprTree Differentiate(const char* var) const;
+    ExprTree Differentiate(const char* var, FILE* texfile) const;
+    /// Dumps tree in graphviz.
+    void Dump(FILE* graphfile) const;
 
     void AddChild(value_type* parent, value_type* son);
 

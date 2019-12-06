@@ -30,15 +30,22 @@ void Node::AddChild(Node* child) {
   } else {
     assert("Cannot add child: both of children exist");
   }
+  Update();
 }
 
 void Node::ReplaceLeft(Node* child) {
   left_ = child;
-  left_->parent_ = this;
+  if (left_ != nullptr) {
+    left_->parent_ = this;
+  }
+  Update();
 }
 
 void Node::ReplaceRight(Node* child) {
   right_ = child;
-  right_->parent_ = this;
+  if (right_ != nullptr) {
+    right_->parent_ = this;
+  }
+  Update();
 }
 

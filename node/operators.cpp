@@ -9,13 +9,6 @@ MathNode* operator+(MathNode& lhs, MathNode& rhs) {
   return operator_node;
 }
 
-MathNode* operator*(MathNode& lhs, MathNode& rhs) {
-  MathNode* operator_node = new OperatorMulNode;
-  operator_node->AddChild(&lhs);
-  operator_node->AddChild(&rhs);
-  return operator_node;
-}
-
 MathNode* operator-(MathNode& node) {
   MathNode* operator_node = new OperatorSubNode;
   operator_node->AddChild(&node);
@@ -24,6 +17,13 @@ MathNode* operator-(MathNode& node) {
 
 MathNode* operator-(MathNode& lhs, MathNode& rhs) {
   MathNode* operator_node = new OperatorSubNode;
+  operator_node->AddChild(&lhs);
+  operator_node->AddChild(&rhs);
+  return operator_node;
+}
+
+MathNode* operator*(MathNode& lhs, MathNode& rhs) {
+  MathNode* operator_node = new OperatorMulNode;
   operator_node->AddChild(&lhs);
   operator_node->AddChild(&rhs);
   return operator_node;

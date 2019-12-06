@@ -5,9 +5,9 @@
 
 
 MathNode* operator+(MathNode& lhs, MathNode& rhs);
-MathNode* operator*(MathNode& lhs, MathNode& rhs);
 MathNode* operator-(MathNode& node);
 MathNode* operator-(MathNode& lhs, MathNode& rhs);
+MathNode* operator*(MathNode& lhs, MathNode& rhs);
 MathNode* operator/(MathNode& lhs, MathNode& rhs);
 
 #endif // OPERATORS_HPP

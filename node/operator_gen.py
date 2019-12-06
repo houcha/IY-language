@@ -1,9 +1,16 @@
-def is_unary_operator(operator):
-    return operator in {'-'}
+class Operator:
 
+    def __init__(self, symbol, name, complexity, priority):
+        self.symbol = symbol
+        self.name = name
+        self.complexity = complexity
+        self.priority = priority
 
-def is_binary_operator(operator):
-    return operator in {'+', '-', '*', '/', '^'}
+    def is_unary_operator(self):
+        return self.symbol in {'-'}
+
+    def is_binary_operator(self):
+        return self.symbol in {'+', '-', '*', '/', '^'}
 
 
 def gen_create_node_cpp(operators, output_file):
@@ -70,13 +77,13 @@ MathNode* CreateNode(const char* begin, const char* end) {
 """
     )
     # Operators.
-    for symbol, name in operators.items():
+    for operator in operators:
         output_file.write(
 """
   if (strncmp(begin, "{}", length) == 0) {{
     return new Operator{}Node;
   }} else\
-""".format(symbol, name.capitalize())
+""".format(operator.symbol, operator.name.capitalize())
     )
     # Constants.
     output_file.write(
@@ -120,17 +127,18 @@ def gen_operators_hpp(operators, output_file):
 
 """
     )
-    for symbol, name in operators.items():
-        if is_unary_operator(symbol):
+    for operator in operators:
+        if operator.is_unary_operator():
             output_file.write(
 """
 MathNode* operator{}(MathNode& node);\
-""".format(symbol)
+""".format(operator.symbol)
             )
-        if is_binary_operator(symbol): output_file.write(
+        if operator.is_binary_operator():
+            output_file.write(
 """
 MathNode* operator{}(MathNode& lhs, MathNode& rhs);\
-""".format(symbol)
+""".format(operator.symbol)
             )
     output_file.write(
 """
@@ -149,8 +157,8 @@ def gen_operators_cpp(operators, output_file):
 
 """
     )
-    for symbol, name in operators.items():
-        if is_unary_operator(symbol):
+    for operator in operators:
+        if operator.is_unary_operator():
             output_file.write(
 """
 MathNode* operator{}(MathNode& node) {{
@@ -158,9 +166,9 @@ MathNode* operator{}(MathNode& node) {{
   operator_node->AddChild(&node);
   return operator_node;
 }}
-""".format(symbol, name.capitalize())
+""".format(operator.symbol, operator.name.capitalize())
             )
-        if is_binary_operator(symbol):
+        if operator.is_binary_operator():
             output_file.write(
 """
 MathNode* operator{}(MathNode& lhs, MathNode& rhs) {{
@@ -169,7 +177,7 @@ MathNode* operator{}(MathNode& lhs, MathNode& rhs) {{
   operator_node->AddChild(&rhs);
   return operator_node;
 }}
-""".format(symbol, name.capitalize())
+""".format(operator.symbol, operator.name.capitalize())
             )
 
 
@@ -185,28 +193,48 @@ def gen_operator_node_hpp(operators, output_file):
 
 /// Ancestor of any operator node.
 class OperatorNode : public MathNode {
+
   protected:
+
     const char* GetColor() const override { return "gold"; }
 };
 
 """
     )
-    for symbol, name in operators.items():
+    for operator in operators:
         output_file.write(
 """
 class Operator{}Node : public OperatorNode {{
 
   public:
 
-    MathNode* Differentiate(const char* var) const override;
+    uint8_t GetPriority() const override {{ return {}; }}
 
+""".format(operator.name.capitalize(), operator.priority)
+        )
+        if (operator.symbol is '/'):
+            output_file.write(
+"""
+    void WriteToTex(FILE* texfile) const override;
+""".format(operator.name.capitalize(), operator.priority)
+            )
+        output_file.write(
+"""
   protected:
 
+    void DumpDiffThis(const char* var, FILE* texfile) const override;
+    MathNode*         DiffThis(const char* var, FILE* texfile) const override;
+    void              WriteThisToTex(FILE* texfile)            const override;
+    MathNode*         SimplifyThis(FILE* texfile)                    override;
+
+    uint32_t          GetThisComplexity() const override {{ return {}; }}
     MathNode*         CopyThis()  const override {{ return new Operator{}Node; }}
     const std::string GetString() const override {{ return std::string("{}"); }}
 }};
 
-""".format(name.capitalize(), name.capitalize(), symbol)
+""".format(operator.complexity,
+           operator.name.capitalize(),
+           operator.symbol)
         )
     output_file.write(
 """
@@ -217,16 +245,16 @@ class Operator{}Node : public OperatorNode {{
 
 
 if __name__ == "__main__":
-    operators = {
-            "+": "add",
-            "-": "sub",
-            "*": "mul",
-            "/": "div",
-            "sin": "sin",
-            "cos": "cos",
-            "tan": "tan",
-            "cot": "cot",
-    }
+    operators = [
+            Operator('+',   "add", 1,  2),
+            Operator("-",   "sub", 2,  2),
+            Operator("*",   "mul", 5,  1),
+            Operator("/",   "div", 6,  1),
+            Operator("sin", "sin", 10, 0),
+            Operator("cos", "cos", 10, 0),
+            Operator("tan", "tan", 15, 0),
+            Operator("cot", "cot", 15, 0),
+    ]
     with open("create_node.cpp", 'w') as output_file:
         gen_create_node_cpp(operators, output_file)
     with open("operators.hpp", 'w') as output_file:

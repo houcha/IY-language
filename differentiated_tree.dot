@@ -1,0 +1,102 @@
+digraph {
+node [shape=circle]
+node0x562fe27c82a0 [label="+" style=filled fillcolor=gold]
+node0x562fe27c6a70 [label="*" style=filled fillcolor=gold]
+node0x562fe27c82a0 -> node0x562fe27c6a70
+node0x562fe27c6a70 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6300 [label="cos" style=filled fillcolor=gold]
+node0x562fe27c6a70 -> node0x562fe27c6300
+node0x562fe27c6300 [label="cos" style=filled fillcolor=gold]
+node0x562fe27c68b0 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6300 -> node0x562fe27c68b0
+node0x562fe27c68b0 [label="*" style=filled fillcolor=gold]
+node0x562fe27c60a0 [label="x" style=filled fillcolor=deeppink]
+node0x562fe27c68b0 -> node0x562fe27c60a0
+node0x562fe27c68b0 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6650 [label="x" style=filled fillcolor=deeppink]
+node0x562fe27c68b0 -> node0x562fe27c6650
+node0x562fe27c6a70 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6a40 [label="+" style=filled fillcolor=gold]
+node0x562fe27c6a70 -> node0x562fe27c6a40
+node0x562fe27c6a40 [label="+" style=filled fillcolor=gold]
+node0x562fe27c68e0 [label="x" style=filled fillcolor=deeppink]
+node0x562fe27c6a40 -> node0x562fe27c68e0
+node0x562fe27c6a40 [label="+" style=filled fillcolor=gold]
+node0x562fe27c69c0 [label="x" style=filled fillcolor=deeppink]
+node0x562fe27c6a40 -> node0x562fe27c69c0
+node0x562fe27c82a0 [label="+" style=filled fillcolor=gold]
+node0x562fe27c8270 [label="+" style=filled fillcolor=gold]
+node0x562fe27c82a0 -> node0x562fe27c8270
+node0x562fe27c8270 [label="+" style=filled fillcolor=gold]
+node0x562fe27c6e30 [label="*" style=filled fillcolor=gold]
+node0x562fe27c8270 -> node0x562fe27c6e30
+node0x562fe27c6e30 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6e00 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6e30 -> node0x562fe27c6e00
+node0x562fe27c6e00 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6dd0 [label="-" style=filled fillcolor=gold]
+node0x562fe27c6e00 -> node0x562fe27c6dd0
+node0x562fe27c6dd0 [label="-" style=filled fillcolor=gold]
+node0x562fe27c6b80 [label="sin" style=filled fillcolor=gold]
+node0x562fe27c6dd0 -> node0x562fe27c6b80
+node0x562fe27c6b80 [label="sin" style=filled fillcolor=gold]
+node0x562fe27c6bb0 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6b80 -> node0x562fe27c6bb0
+node0x562fe27c6bb0 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6be0 [label="10" style=filled fillcolor=floralwhite]
+node0x562fe27c6bb0 -> node0x562fe27c6be0
+node0x562fe27c6bb0 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6c10 [label="x" style=filled fillcolor=deeppink]
+node0x562fe27c6bb0 -> node0x562fe27c6c10
+node0x562fe27c6e00 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6d40 [label="10" style=filled fillcolor=floralwhite]
+node0x562fe27c6e00 -> node0x562fe27c6d40
+node0x562fe27c6e30 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6aa0 [label="cos" style=filled fillcolor=gold]
+node0x562fe27c6e30 -> node0x562fe27c6aa0
+node0x562fe27c6aa0 [label="cos" style=filled fillcolor=gold]
+node0x562fe27c6ad0 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6aa0 -> node0x562fe27c6ad0
+node0x562fe27c6ad0 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6b00 [label="10" style=filled fillcolor=floralwhite]
+node0x562fe27c6ad0 -> node0x562fe27c6b00
+node0x562fe27c6ad0 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6b30 [label="x" style=filled fillcolor=deeppink]
+node0x562fe27c6ad0 -> node0x562fe27c6b30
+node0x562fe27c8270 [label="+" style=filled fillcolor=gold]
+node0x562fe27c8240 [label="*" style=filled fillcolor=gold]
+node0x562fe27c8270 -> node0x562fe27c8240
+node0x562fe27c8240 [label="*" style=filled fillcolor=gold]
+node0x562fe27c8160 [label="cos" style=filled fillcolor=gold]
+node0x562fe27c8240 -> node0x562fe27c8160
+node0x562fe27c8160 [label="cos" style=filled fillcolor=gold]
+node0x562fe27c8190 [label="*" style=filled fillcolor=gold]
+node0x562fe27c8160 -> node0x562fe27c8190
+node0x562fe27c8190 [label="*" style=filled fillcolor=gold]
+node0x562fe27c81c0 [label="10" style=filled fillcolor=floralwhite]
+node0x562fe27c8190 -> node0x562fe27c81c0
+node0x562fe27c8190 [label="*" style=filled fillcolor=gold]
+node0x562fe27c81f0 [label="x" style=filled fillcolor=deeppink]
+node0x562fe27c8190 -> node0x562fe27c81f0
+node0x562fe27c8240 [label="*" style=filled fillcolor=gold]
+node0x562fe27c8130 [label="*" style=filled fillcolor=gold]
+node0x562fe27c8240 -> node0x562fe27c8130
+node0x562fe27c8130 [label="*" style=filled fillcolor=gold]
+node0x562fe27c8100 [label="-" style=filled fillcolor=gold]
+node0x562fe27c8130 -> node0x562fe27c8100
+node0x562fe27c8100 [label="-" style=filled fillcolor=gold]
+node0x562fe27c6e60 [label="sin" style=filled fillcolor=gold]
+node0x562fe27c8100 -> node0x562fe27c6e60
+node0x562fe27c6e60 [label="sin" style=filled fillcolor=gold]
+node0x562fe27c6e90 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6e60 -> node0x562fe27c6e90
+node0x562fe27c6e90 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6ec0 [label="10" style=filled fillcolor=floralwhite]
+node0x562fe27c6e90 -> node0x562fe27c6ec0
+node0x562fe27c6e90 [label="*" style=filled fillcolor=gold]
+node0x562fe27c6ef0 [label="x" style=filled fillcolor=deeppink]
+node0x562fe27c6e90 -> node0x562fe27c6ef0
+node0x562fe27c8130 [label="*" style=filled fillcolor=gold]
+node0x562fe27c7020 [label="10" style=filled fillcolor=floralwhite]
+node0x562fe27c8130 -> node0x562fe27c7020
+}

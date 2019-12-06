@@ -24,6 +24,8 @@ class Node {
     void AddChild(Node* child);
     void ReplaceLeft(Node* child);
     void ReplaceRight(Node* child);
+
+    virtual void Update() {};
 };
 
 

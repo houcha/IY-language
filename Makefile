@@ -1,6 +1,6 @@
 CXXFLAGS = -std=c++17
 STATIC_CHECK_FLAGS = -Wall -Wextra -pedantic
-OBJS = main.o text.o tree_dump.o expression_tree.o
+OBJS = main.o text.o expression_tree.o
 SUBDIR = node
 
 
