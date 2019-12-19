@@ -21,8 +21,22 @@ int GrammarParser::GetValue() {
 
 
 int GrammarParser::GetG() {
-  int val = GetN();
+  int val = GetE();
   ASSERT(*pos_ == '#', "expected #, got '%c' instead\n", *pos_);
+  return val;
+}
+
+int GrammarParser::GetE() {
+  int val = GetN();
+  while (*pos_ == '-' || *pos_ == '+') {
+    const char* prev_pos = pos_++;
+    int next_val = GetN();
+    if (*prev_pos == '-') {
+      val -= next_val;
+    } else {
+      val += next_val;
+    }
+  }
   return val;
 }
 
