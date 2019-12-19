@@ -42,16 +42,29 @@ int GrammarParser::GetE() {
 }
 
 int GrammarParser::GetT() {
-  int val = GetN();
+  int val = GetP();
   while (*pos_ == '*' || *pos_ == '/') {
     char op = *pos_;
     pos_++;
-    int next_val = GetN();
+    int next_val = GetP();
     if (op == '*') {
       val *= next_val;
     } else {
       val /= next_val;
     }
+  }
+  return val;
+}
+
+int GrammarParser::GetP() {
+  int val = 0;
+  if (*pos_ == '(') {
+    pos_++;
+    val = GetE();
+    ASSERT(*pos_ == ')', "expected ')', got '%c' instead\n", *pos_);
+    pos_++;
+  } else {
+    val = GetN();
   }
   return val;
 }
