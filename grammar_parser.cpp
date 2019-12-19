@@ -1,28 +1,39 @@
 #include "grammar_parser.hpp"
 #include <cassert>
+#include <cstdio>
 
+
+#define ASSERT(condition, ...) {\
+  if (!(condition)) {\
+    printf("Error: " __VA_ARGS__);\
+    fflush(stdout);\
+    assert(condition);\
+  }\
+}
 
 GrammarParser::GrammarParser(const char* text)
     : pos_(text) {}
 
 
 int GrammarParser::GetValue() {
-  GetG();
+  return GetG();
 }
 
 
 int GrammarParser::GetG() {
   int val = GetN();
-  assert(*pos_ == '#');
+  ASSERT(*pos_ == '#', "expected #, got '%c' instead\n", *pos_);
   return val;
 }
 
 int GrammarParser::GetN() {
   int val = 0;
-  if ('0' <= *pos_ && *pos_ <= '9') {
-    val = *pos_ - '0';
+  do {
+    ASSERT('0' <= *pos_ && *pos_ <= '9',
+        "expected [0-9], got '%c' instead\n", *pos_);
+    val = val*10 + *pos_ - '0';
     ++pos_;
-  }
+  } while ('0' <= *pos_ && *pos_ <= '9');
   return val;
 }
 
