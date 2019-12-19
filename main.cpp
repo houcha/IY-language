@@ -1,5 +1,5 @@
 #include "text.hpp"
-#include "grammar_parser.hpp"
+#include "expression_parser.hpp"
 
 
 int main() {
@@ -8,8 +8,8 @@ int main() {
   program.Load(program_file);
   fclose(program_file);
 
-  GrammarParser parser(program.Data());
-  printf("%d\n", parser.GetValue());
+  ExpressionParser parser(program.Data());
+  printf("%d\n", parser.GetExpression());
 
   return 0;
 }
