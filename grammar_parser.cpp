@@ -29,9 +29,10 @@ int GrammarParser::GetG() {
 int GrammarParser::GetE() {
   int val = GetN();
   while (*pos_ == '-' || *pos_ == '+') {
-    const char* prev_pos = pos_++;
+    char op = *pos_;
+    pos_++;
     int next_val = GetN();
-    if (*prev_pos == '-') {
+    if (op == '-') {
       val -= next_val;
     } else {
       val += next_val;
