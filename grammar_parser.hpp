@@ -18,6 +18,7 @@ class GrammarParser {
 
     int GetG();
     int GetE();
+    int GetT();
     int GetN();
 };
 

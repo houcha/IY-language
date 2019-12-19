@@ -27,15 +27,30 @@ int GrammarParser::GetG() {
 }
 
 int GrammarParser::GetE() {
-  int val = GetN();
+  int val = GetT();
   while (*pos_ == '-' || *pos_ == '+') {
     char op = *pos_;
     pos_++;
-    int next_val = GetN();
+    int next_val = GetT();
     if (op == '-') {
       val -= next_val;
     } else {
       val += next_val;
+    }
+  }
+  return val;
+}
+
+int GrammarParser::GetT() {
+  int val = GetN();
+  while (*pos_ == '*' || *pos_ == '/') {
+    char op = *pos_;
+    pos_++;
+    int next_val = GetN();
+    if (op == '*') {
+      val *= next_val;
+    } else {
+      val /= next_val;
     }
   }
   return val;
