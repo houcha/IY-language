@@ -8,8 +8,14 @@ int main() {
   program.Load(program_file);
   fclose(program_file);
 
-  ExpressionParser parser(program.Data());
-  printf("%d\n", parser.GetExpression());
+  Parser parser(program.Data());
+  Node* tree = parser.GetExpression();
+
+  FILE* tree_file = fopen("tree.dot", "w");
+  fprintf(tree_file, "digraph {\n\tnode [shape=circle]\n");
+  tree->WriteToGraphviz(tree_file);
+  fprintf(tree_file, "}");
+  fclose(tree_file);
 
   return 0;
 }

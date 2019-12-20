@@ -1,4 +1,7 @@
 #include "expression_parser.hpp"
+#include "node/operators.hpp"
+#include "node/const_node.hpp"
+#include "node/var_node.hpp"
 #include <cassert>
 #include <cstdio>
 
@@ -11,72 +14,204 @@
   }\
 }
 
-ExpressionParser::ExpressionParser(const char* text)
-    : pos_(text) {}
-
-
-int ExpressionParser::GetExpression() {
-  return GetG();
+bool IsDigit(char ch) {
+  return '0' <= ch && ch <= '9';
 }
 
+Parser::Parser(const char* text)
+    : pos_(text),
+      error_() {}
 
-int ExpressionParser::GetG() {
-  int val = GetE();
-  ASSERT(*pos_ == '#', "expected #, got '%c' instead\n", *pos_);
-  return val;
+
+Node* Parser::GetArgs() {
+  const char* begin = pos_;
+  ArgsNode* result = nullptr;
+  Node* id = GetIdentifier();
+  if (id != nullptr) {
+    result = new ArgsNode();
+    while (*pos_ == ',') {
+      pos_++;
+      Node* next_id = GetIdentifier();
+      if (next_id != nullptr) {
+        result->AddArg(next_id);
+      } else {
+        error_.PushError("expected '<identifier>' after ','\n");
+        delete result;
+        result = nullptr;
+      }
+    }
+  } else { // Since {...}?
+    pos_ = begin;
+  }
+  return result;
 }
 
-int ExpressionParser::GetE() {
-  int val = GetT();
-  while (*pos_ == '-' || *pos_ == '+') {
-    char op = *pos_;
-    pos_++;
-    int next_val = GetT();
-    if (op == '-') {
-      val -= next_val;
+Node* Parser::GetExpression() {
+  const char* begin = pos_;
+  Node* result = GetVariable();
+  if (result != nullptr) {
+    if (*pos_ == '=') {
+      pos_++;
+      Node* expr = GetExpression();
+      if (expr != nullptr) {
+        result = new AssignNode(result, expr);
+      } else {
+        delete result;
+        result = nullptr;
+      }
     } else {
-      val += next_val;
+      delete result;
+      result = nullptr;
     }
   }
-  return val;
-}
-
-int ExpressionParser::GetT() {
-  int val = GetP();
-  while (*pos_ == '*' || *pos_ == '/') {
-    char op = *pos_;
-    pos_++;
-    int next_val = GetP();
-    if (op == '*') {
-      val *= next_val;
-    } else {
-      val /= next_val;
+  if (result == nullptr) {
+    pos_ = begin;
+    result = GetSum();
+    if (result == nullptr) {
+      error_.PushError("expected '<variable> = <expression>' or '<sum>'\n");
     }
   }
-  return val;
+  return result;
 }
 
-int ExpressionParser::GetP() {
-  int val = 0;
+Node* Parser::GetSum() {
+  Node* result = GetMultiplication();
+  if (result != nullptr) {
+    while (*pos_ == '+' || *pos_ == '-') {
+      char op = *pos_;
+      pos_++;
+      Node* mul = GetMultiplication();
+      if (mul != nullptr) {
+        if (op == '+') {
+          result = *result + *mul;
+        } else {
+          result = *result - *mul;
+        }
+      } else {
+        error_.PushError("expected '<multiplication>' after '+' or '-'\n");
+        delete mul;
+        delete result;
+        result = nullptr;
+        break;
+      }
+    }
+  }
+  return result;
+}
+
+Node* Parser::GetMultiplication() {
+  Node* result = GetUnitExpr();
+  if (result != nullptr) {
+    while (*pos_ == '*' || *pos_ == '/') {
+      char op = *pos_;
+      pos_++;
+      Node* unit = GetUnitExpr();
+      if (unit != nullptr) {
+        if (op == '*') {
+          result = *result * *unit;
+        } else {
+          result = *result / *unit;
+        }
+      } else {
+        error_.PushError("expected '<unit_expr>' after '*' or '/'\n");
+        delete unit;
+        delete result;
+        result = nullptr;
+        break;
+      }
+    }
+  }
+  return result;
+}
+
+Node* Parser::GetUnitExpr() {
+  const char* begin = pos_;
+  Node* result = nullptr;
   if (*pos_ == '(') {
     pos_++;
-    val = GetE();
-    ASSERT(*pos_ == ')', "expected ')', got '%c' instead\n", *pos_);
-    pos_++;
+    Node* expression = GetExpression();
+    if (*pos_ == ')') {
+      pos_++;
+      result = expression;
+    } else {
+      error_.PushError("expected ')' after '(<expression>'\n");
+      delete expression;
+    }
   } else {
-    val = GetN();
+    result = GetNumber();
+    if (result == nullptr) { // Is not a number.
+      pos_ = begin;
+      result = GetFunctionCall();
+      if (result == nullptr) { // If not a function call.
+        pos_ = begin;
+        result = GetVariable(); // It is nullptr if failed to read variable.
+        if (result == nullptr) {
+          error_.PushError("expected""'(<expression)',"
+                                     "'<number>',"
+                                     "'<function_call>' or"
+                                     "'<variable>'\n");
+        }
+      }
+    }
   }
-  return val;
+  return result;
 }
 
-int ExpressionParser::GetN() {
+Node* Parser::GetNumber() {
   int val = 0;
   do {
-    ASSERT('0' <= *pos_ && *pos_ <= '9',
-        "expected [0-9], got '%c' instead\n", *pos_);
+    if (!IsDigit(*pos_)) { // If failed.
+      error_.PushError("expected '[0-9]'\n");
+      return nullptr;
+    }
     val = val*10 + *pos_ - '0';
     ++pos_;
-  } while ('0' <= *pos_ && *pos_ <= '9');
-  return val;
+  } while (IsDigit(*pos_));
+  return new ConstNode<int>(val);
+}
+
+Node* Parser::GetFunctionCall() {
+  Node* result = nullptr;
+  Node* id = GetIdentifier();
+  if (id == nullptr) { // If failed on identifier.
+    return nullptr;
+  }
+  if (*pos_ == '(') {
+    pos_++;
+    Node* args = GetArgs();
+    if (*pos_ == ')') {
+      pos_++;
+      result = new FunctionCallNode(id->GetString(), args);
+    } else { // If failed on ')'
+      error_.PushError("expected ')' after function arguments\n");
+      delete args;
+    }
+  } else { // If failed on '('
+    error_.PushError("expected '(' after function identifier\n");
+  }
+  delete id;
+  return result;
+}
+
+Node* Parser::GetVariable() {
+  Node* result = nullptr;
+  Node* id = GetIdentifier();
+  if (id != nullptr) {
+    result = new VarNode(id->GetString());
+    delete id;
+  }
+  return result;
+}
+
+Node* Parser::GetIdentifier() {
+  std::string name;
+  do {
+    if (!(('a' <= *pos_ && *pos_ <= 'z') || ('A' <= *pos_ && *pos_ <= 'Z'))) {
+      return nullptr;
+    }
+    name.push_back(*pos_);
+    pos_++;
+  } while (('a' <= *pos_ && *pos_ <= 'z') || ('A' <= *pos_ && *pos_ <= 'Z'));
+  return new IdentifierNode(name);
 }
 

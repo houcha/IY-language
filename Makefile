@@ -1,7 +1,6 @@
 CXXFLAGS = -std=c++17
 STATIC_CHECK_FLAGS = -Wall -Wextra -pedantic
-OBJS = main.o text.o expression_parser.o
-DEPS =
+OBJS = main.o text.o expression_parser.o node/operators.o node/math_node.o node/node.o node/operator_node.o node/var_node.o
 
 
 %.o: %.cpp

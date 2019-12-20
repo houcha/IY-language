@@ -1,0 +1,34 @@
+#include "var_node.hpp"
+#include "const_node.hpp"
+#include <cstring>
+
+
+MathNode* VarNode::Differentiate(const char* var) const {
+  if (strcmp(name_.data(), var) == 0) {
+    return new ConstNode<int>(1);
+  }
+  return new ConstNode<int>(0);
+}
+
+uint8_t VarNode::GetPriority() const {
+  return 0;
+}
+
+const std::string VarNode::GetString() const {
+  return name_;
+}
+
+MathNode* VarNode::CopyThis() const {
+  return new VarNode(*this);
+}
+
+uint32_t VarNode::GetThisComplexity() const {
+  return 5;
+}
+
+const char* VarNode::GetColor() const {
+  return "deeppink";
+}
+
+
+

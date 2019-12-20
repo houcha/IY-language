@@ -1,0 +1,33 @@
+<all> ::= {<function_decl> | <declaration>}* main() {{ {<statement>;}* }}
+
+<function_decl> ::= !{main}<identifier>(<decl_args>) {{ {<statement>;}* }}
+
+<decl_args> ::= {<identifier>{, <identifier>}*}?
+
+<declaration> ::= var <variable>;
+
+<statement> ::= <expression>
+              | <condition>
+              | <loop>
+
+<condition> ::=
+    if (<expression>) {{ {<statement>;}* }} {else {{ {<statement>;}* }} }?
+
+<loop> ::= while (<expression>) {{ {<statement>;}* }}
+
+<expression> ::= <variable> = <expression>
+               | <sum>
+
+<sum> ::= <multiplication>{[+-]<multiplication>}*
+<multiplication> ::= <unit_expr>{[*/]<unit_expr>}*
+<unit_expr> ::= (<expression>)
+              | <number>
+              | <function_call>
+              | <variable>
+
+<number> ::= {[0-9]}+
+<function_call> ::= <identifier>(<call_args>)
+<call_args> ::= {<expression>{, <expression>}*}?
+<variable> ::= <identifier>
+<identifier> ::= {[a-z | A-z]}+
+
