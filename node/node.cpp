@@ -5,10 +5,20 @@
 
 const size_t MAX_INFO_STR_LEN = 100;
 
+Node::Node() : left_  (nullptr),
+         right_ (nullptr),
+         parent_(nullptr) {}
+
+Node::Node(Node* left, Node* right) : Node() {
+  AddChild(left);
+  AddChild(right);
+}
+
 Node::~Node() {
   delete left_;
   delete right_;
 }
+
 
 bool Node::IsLeaf() const {
   return right_ == nullptr;
@@ -38,7 +48,6 @@ void Node::AddChild(Node* child) {
   } else {
     assert("Cannot add child: both of children exist");
   }
-  Update();
 }
 
 //void Node::DelSon(Node* son) {
@@ -67,7 +76,6 @@ void Node::ReplaceLeft(Node* child) {
   if (left_ != nullptr) {
     left_->parent_ = this;
   }
-  Update();
 }
 
 void Node::ReplaceRight(Node* child) {
@@ -75,7 +83,11 @@ void Node::ReplaceRight(Node* child) {
   if (right_ != nullptr) {
     right_->parent_ = this;
   }
-  Update();
+}
+
+void Node::InitParent(Node* parent) {
+  assert(parent_ == nullptr);
+  parent_ = parent;
 }
 
 const char* Node::GetColor() const {
@@ -90,16 +102,11 @@ void Node::WriteThisToGraphviz(FILE* graphfile) const {
 }
 
 void Node::WriteToGraphviz(FILE* graphfile) const {
+  WriteThisToGraphviz(graphfile);
   if (GetParent() != nullptr) {
-    GetParent()->WriteThisToGraphviz(graphfile);
     fprintf(graphfile, "node%p -> node%p\n", (void*)GetParent(), (void*)this);
   }
-  WriteThisToGraphviz(graphfile);
-  if (GetLeft() != nullptr) {
-    GetLeft()->WriteToGraphviz(graphfile);
-  }
-  if (GetRight() != nullptr) {
-    GetRight()->WriteToGraphviz(graphfile);
-  }
+  if (GetLeft()  != nullptr) { GetLeft()->WriteToGraphviz(graphfile); }
+  if (GetRight() != nullptr) { GetRight()->WriteToGraphviz(graphfile); }
 }
 

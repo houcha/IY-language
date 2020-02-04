@@ -10,20 +10,15 @@ class Node {
 
   protected:
 
-    //std::vector<Node*> sons_;
     Node* left_;
     Node* right_;
     Node* parent_;
 
   public:
 
-    Node() : left_  (nullptr),
-             right_ (nullptr),
-             parent_(nullptr) {}
+    Node();
+    Node(Node* left, Node* right);
 
-    Node(Node* left, Node* right) : left_  (left),
-                                    right_ (right),
-                                    parent_(nullptr) {}
     virtual ~Node();
 
     bool IsLeaf()       const;
@@ -32,31 +27,29 @@ class Node {
     bool IsRightChild() const;
 
     void AddChild(Node* child);
-    //void DelChild(Node* child);
 
     void ReplaceLeft (Node* child);
     void ReplaceRight(Node* child);
 
+    void InitParent(Node* parent);
+
     Node* GetLeft()   const;
     Node* GetRight()  const;
     Node* GetParent() const;
-    /// Return string which describes node as GraphViz element.
-    void WriteToGraphviz(FILE* graphfile) const;
+
+    virtual void WriteToGraphviz(FILE* graphfile) const;
 
     virtual const std::string GetString() const = 0;
 
   protected:
 
     virtual const char* GetColor() const;
-    virtual void Update() {};
-
-  private:
 
     void WriteThisToGraphviz(FILE* graphfile) const;
 };
 
 
-class FunctionDeclNode : public Node {
+class FuncDeclNode : public Node {
 
   private:
 
@@ -66,13 +59,16 @@ class FunctionDeclNode : public Node {
 
   public:
 
-    FunctionDeclNode() {}
+    FuncDeclNode(const std::string& name, Node* args, Node* statements)
+        : Node(args, statements),
+          name_(name) {}
 
-    virtual const std::string GetString() const { return name_; }
+    const std::string GetString() const override { return name_; }
+    const char*       GetColor()  const override { return "aquamarine"; }
 };
 
 
-class FunctionCallNode : public Node {
+class FuncCallNode : public Node {
 
   private:
 
@@ -82,28 +78,12 @@ class FunctionCallNode : public Node {
 
   public:
 
-    FunctionCallNode(const std::string& name, Node* args)
-        : name_(name),
-          Node(args, nullptr) {}
+    FuncCallNode(const std::string& name, Node* args)
+        : Node(args, nullptr),
+          name_(name) {}
 
-    virtual const std::string GetString() const { return name_; }
-};
-
-
-class ArgsNode : public Node {
-
-  private:
-
-    // left_ is args.
-    std::vector<Node*> args_;
-
-  public:
-
-    ArgsNode() : args_() {}
-
-    void AddArg(Node* node) {}
-
-    virtual const std::string GetString() const { return "ARGS"; }
+    const std::string GetString() const override { return name_; }
+    const char*       GetColor()  const override { return "aquamarine"; }
 };
 
 
@@ -115,10 +95,9 @@ class IdentifierNode : public Node {
 
   public:
 
-    IdentifierNode(const std::string& name)
-        : name_(name) {}
+    IdentifierNode(const std::string& name) : name_(name) {}
 
-    virtual const std::string GetString() const override { return name_; }
+    const std::string GetString() const override { return name_; }
 };
 
 
@@ -126,15 +105,92 @@ class AssignNode : public Node {
 
   public:
 
-    AssignNode(Node* var, Node* expr)
-        : Node(var, expr) {}
+    AssignNode(Node* var, Node* expr) : Node(var, expr) {}
 
-    virtual const std::string GetString() const override { return "="; }
+    const std::string GetString() const override { return "="; }
+};
+
+class LoopNode : public Node {
+
+  public:
+
+    LoopNode(Node* condition, Node* statement) : Node(condition, statement) {}
+
+    const std::string GetString() const override { return "LOOP"; }
+};
+
+class IfNode : public Node {
+
+  public:
+
+    IfNode(Node* condition, Node* statement) : Node(condition, statement) {}
+
+    const std::string GetString() const override { return "IF"; }
+};
+
+//------------------------------------------------------------------------------
+
+class MultiNode : public Node {
+
+  protected:
+
+    std::vector<Node*> sons_;
+
+  public:
+
+    void WriteToGraphviz(FILE* graphfile) const override {
+      WriteThisToGraphviz(graphfile);
+      if (GetParent() != nullptr) {
+        fprintf(graphfile, "node%p -> node%p\n", (void*)GetParent(), (void*)this);
+      }
+      for (Node* son : sons_) {
+        son->WriteToGraphviz(graphfile);
+      }
+    }
+
+    void AddSon(Node* son) {
+      sons_.push_back(son);
+      son->InitParent(this);
+    }
+};
+
+class BaseNode : public MultiNode {
+
+  public:
+
+    void AddDecl(Node* node) { AddSon(node); }
+
+    const std::string GetString() const override { return "BASE"; }
+    const char*       GetColor()  const override { return "black"; }
+};
+
+class VarsNode : public MultiNode {
+
+  public:
+
+    void AddVar(Node* node) { AddSon(node); }
+
+    const std::string GetString() const override { return "VARS"; }
+};
+
+class ArgsNode : public MultiNode {
+
+  public:
+
+    void AddArg(Node* node) { AddSon(node); }
+
+    const std::string GetString() const override { return "ARGS"; }
 };
 
 
+class StatementNode : public MultiNode {
 
+  public:
 
+    void AddStatement(Node* node) { AddSon(node); }
+
+    const std::string GetString() const override { return "STAT"; }
+};
 
 
 

@@ -35,7 +35,6 @@ int GetNumberType(const char* str, size_t len) {
 }
 
 bool IsCorrectVarName(const char* str, size_t len) {
-
   if (IsDigit(str[0])) { return false; }
 
   for (size_t i = 0; i < len; ++i) {
@@ -55,7 +54,6 @@ MathNode* CreateNode(const char* begin, const char* end) {
 
   size_t length = end - begin + 1;
   int tmp = 0; // Temporary variable.
-
 
   if (strncmp(begin, "+", length) == 0) {
     return new OperatorAddNode;

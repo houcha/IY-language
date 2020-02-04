@@ -1,33 +1,35 @@
-<all> ::= {<function_decl> | <declaration>}* main() {{ {<statement>;}* }}
+-------------------------------
+<all> ::= {<func_decl> | <var_decl>}*
 
-<function_decl> ::= !{main}<identifier>(<decl_args>) {{ {<statement>;}* }}
+<func_decl> ::= <identifier>(<func_decl_args>) {{ {<statement>}* }}
 
-<decl_args> ::= {<identifier>{, <identifier>}*}?
+<func_decl_args> ::= {<identifier>{, <identifier>}*}?
 
-<declaration> ::= var <variable>;
+<var_decl> ::= var <variable>{, <variable>}*;
 
-<statement> ::= <expression>
-              | <condition>
+<statement> ::= <condition>
               | <loop>
+              | <var_decl>
+              | <assignement>;
+              | <expression>;
 
 <condition> ::=
-    if (<expression>) {{ {<statement>;}* }} {else {{ {<statement>;}* }} }?
+    if (<expression>) {{ {<statement>}* }} {else {{ {<statement>}* }} }?
 
-<loop> ::= while (<expression>) {{ {<statement>;}* }}
+<loop> ::= while (<expression>) {{ {<statement>}* }}
 
-<expression> ::= <variable> = <expression>
-               | <sum>
+<assignement> ::= <variable> = <expression>
 
-<sum> ::= <multiplication>{[+-]<multiplication>}*
-<multiplication> ::= <unit_expr>{[*/]<unit_expr>}*
-<unit_expr> ::= (<expression>)
-              | <number>
-              | <function_call>
-              | <variable>
+<expression>     ::= <multiplication>{[+-]<multiplication>}*
+<multiplication> ::= <unit_expr>     {[*/]<unit_expr>}*
+<unit_expr>      ::= (<expression>)
+                   | <number>
+                   | <func_call>
+                   | <variable>
 
-<number> ::= {[0-9]}+
-<function_call> ::= <identifier>(<call_args>)
-<call_args> ::= {<expression>{, <expression>}*}?
-<variable> ::= <identifier>
-<identifier> ::= {[a-z | A-z]}+
+<func_call>  ::= <identifier>(<call_args>)
+<call_args>  ::= {<expression>{, <expression>}*}?
+<variable>   ::= <identifier>
+<number>     ::= {[0-9]}+
+<identifier> ::= {[a-z | A-Z]}+
 

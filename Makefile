@@ -1,6 +1,6 @@
 CXXFLAGS = -std=c++17
 STATIC_CHECK_FLAGS = -Wall -Wextra -pedantic
-OBJS = main.o text.o expression_parser.o node/operators.o node/math_node.o node/node.o node/operator_node.o node/var_node.o
+OBJS = main.o text.o parser.o node/operators.o node/math_node.o node/node.o node/operator_node.o node/var_node.o
 
 
 %.o: %.cpp
@@ -10,9 +10,9 @@ main: $(OBJS) $(DEPS)
 
 # Debug.
 %.g.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(STATIC_CHECK_FLAGS) -g -c -o $@ $<
+	$(CXX) $(CXXFLAGS) $(STATIC_CHECK_FLAGS) -g -O0 -c -o $@ $<
 debug: $(OBJS:.o=.g.o) $(DEPS)
-	$(CXX) $(CXXFLAGS) $(STATIC_CHECK_FLAGS) -g -o $@ $^
+	$(CXX) $(CXXFLAGS) $(STATIC_CHECK_FLAGS) -g -O0 -o $@ $^
 
 
 .PHONY: clean

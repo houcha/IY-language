@@ -1,9 +1,8 @@
 class Operator:
 
-    def __init__(self, symbol, name, complexity, priority):
+    def __init__(self, symbol, name, priority):
         self.symbol = symbol
         self.name = name
-        self.complexity = complexity
         self.priority = priority
 
     def is_unary_operator(self):
@@ -53,7 +52,6 @@ int GetNumberType(const char* str, size_t len) {
 }
 
 bool IsCorrectVarName(const char* str, size_t len) {
-
   if (IsDigit(str[0])) { return false; }
 
   for (size_t i = 0; i < len; ++i) {
@@ -73,7 +71,6 @@ MathNode* CreateNode(const char* begin, const char* end) {
 
   size_t length = end - begin + 1;
   int tmp = 0; // Temporary variable.
-
 """
     )
     # Operators.
@@ -219,13 +216,10 @@ class Operator{}Node : public OperatorNode {{
 
     MathNode* Differentiate(const char* var) const override;
     MathNode* SimplifyThis() override;
-
-    uint32_t  GetThisComplexity() const override {{ return {}; }}
     MathNode* CopyThis() const override {{ return new Operator{}Node; }}
 }};
 
-""".format(operator.complexity,
-           operator.name.capitalize())
+""".format(operator.name.capitalize())
         )
     output_file.write(
 """
@@ -237,14 +231,14 @@ class Operator{}Node : public OperatorNode {{
 
 if __name__ == "__main__":
     operators = [
-            Operator('+',   "add", 1,  2),
-            Operator("-",   "sub", 2,  2),
-            Operator("*",   "mul", 5,  1),
-            Operator("/",   "div", 6,  1),
-            Operator("sin", "sin", 10, 0),
-            Operator("cos", "cos", 10, 0),
-            Operator("tan", "tan", 15, 0),
-            Operator("cot", "cot", 15, 0),
+            Operator('+',   "add", 2),
+            Operator("-",   "sub", 2),
+            Operator("*",   "mul", 1),
+            Operator("/",   "div", 1),
+            Operator("sin", "sin", 0),
+            Operator("cos", "cos", 0),
+            Operator("tan", "tan", 0),
+            Operator("cot", "cot", 0),
     ]
     with open("create_node.cpp", 'w') as output_file:
         gen_create_node_cpp(operators, output_file)

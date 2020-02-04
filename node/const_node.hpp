@@ -13,8 +13,8 @@ class ConstNode : public MathNode {
 
   public:
 
-    ConstNode(T value)                : value_(value)        { Update(); }
-    ConstNode(const ConstNode& other) : value_(other.value_) { Update(); }
+    ConstNode(T value)                : value_(value)        {}
+    ConstNode(const ConstNode& other) : value_(other.value_) {}
 
     MathNode* Differentiate(const char* var) const override;
 
@@ -25,9 +25,8 @@ class ConstNode : public MathNode {
 
   protected:
 
-    MathNode*         CopyThis()          const override;
-    uint32_t          GetThisComplexity() const override;
-    const char*       GetColor()          const override;
+    MathNode*   CopyThis() const override;
+    const char* GetColor() const override;
 };
 
 #include "const_node.inl"

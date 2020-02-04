@@ -1,10 +1,6 @@
 #include "math_node.hpp"
 
 
-uint32_t MathNode::GetComplexity() const {
-  return info_.complexity_;
-}
-
 MathNode* MathNode::GetCopy() const {
   MathNode* copy = CopyThis();
   if (GetLeft() != nullptr) { copy->AddChild(GetLeft()->GetCopy()); }
@@ -36,15 +32,5 @@ MathNode* MathNode::GetParent() const {
 
 const char* MathNode::GetColor() const {
   return "cyan";
-}
-
-void MathNode::Update() {
-  info_.complexity_ = GetThisComplexity();
-  if (GetLeft() != nullptr) {
-    info_.complexity_ += GetLeft()->GetComplexity();
-  }
-  if (GetRight() != nullptr) {
-    info_.complexity_ += GetRight()->GetComplexity();
-  }
 }
 

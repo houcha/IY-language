@@ -20,14 +20,6 @@ MathNode* ConstNode<T>::CopyThis() const {
 }
 
 template <typename T>
-uint32_t ConstNode<T>::GetThisComplexity() const {
-  if (std::is_integral<T>::value) {
-    return 1;
-  }
-  return 2;
-}
-
-template <typename T>
 const std::string ConstNode<T>::GetString() const {
   return std::to_string(value_);
 }

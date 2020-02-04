@@ -12,20 +12,19 @@ class VarNode : public MathNode {
 
   public:
 
-    VarNode(const char* str, size_t len) : name_(str, len)    { Update(); }
-    VarNode(const std::string& str)      : name_(str)         { Update(); }
-    VarNode(const VarNode& other)        : name_(other.name_) { Update(); }
+    VarNode(const char* str, size_t len) : name_(str, len)    {}
+    VarNode(const std::string& str)      : name_(str)         {}
+    VarNode(const VarNode& other)        : name_(other.name_) {}
 
-    uint8_t GetPriority() const override;
+    uint8_t   GetPriority()                  const override;
     MathNode* Differentiate(const char* var) const override;
 
     const std::string GetString() const override;
 
   protected:
 
-    MathNode*   CopyThis()          const override;
-    uint32_t    GetThisComplexity() const override;
-    const char* GetColor()          const override;
+    MathNode*   CopyThis() const override;
+    const char* GetColor() const override;
 };
 
 

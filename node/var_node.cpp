@@ -22,10 +22,6 @@ MathNode* VarNode::CopyThis() const {
   return new VarNode(*this);
 }
 
-uint32_t VarNode::GetThisComplexity() const {
-  return 5;
-}
-
 const char* VarNode::GetColor() const {
   return "deeppink";
 }

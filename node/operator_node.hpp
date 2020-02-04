@@ -26,8 +26,6 @@ class OperatorAddNode : public OperatorNode {
 
     MathNode* Differentiate(const char* var) const override;
     MathNode* SimplifyThis() override;
-
-    uint32_t  GetThisComplexity() const override { return 1; }
     MathNode* CopyThis() const override { return new OperatorAddNode; }
 };
 
@@ -44,8 +42,6 @@ class OperatorSubNode : public OperatorNode {
 
     MathNode* Differentiate(const char* var) const override;
     MathNode* SimplifyThis() override;
-
-    uint32_t  GetThisComplexity() const override { return 2; }
     MathNode* CopyThis() const override { return new OperatorSubNode; }
 };
 
@@ -62,8 +58,6 @@ class OperatorMulNode : public OperatorNode {
 
     MathNode* Differentiate(const char* var) const override;
     MathNode* SimplifyThis() override;
-
-    uint32_t  GetThisComplexity() const override { return 5; }
     MathNode* CopyThis() const override { return new OperatorMulNode; }
 };
 
@@ -80,8 +74,6 @@ class OperatorDivNode : public OperatorNode {
 
     MathNode* Differentiate(const char* var) const override;
     MathNode* SimplifyThis() override;
-
-    uint32_t  GetThisComplexity() const override { return 6; }
     MathNode* CopyThis() const override { return new OperatorDivNode; }
 };
 
@@ -98,8 +90,6 @@ class OperatorSinNode : public OperatorNode {
 
     MathNode* Differentiate(const char* var) const override;
     MathNode* SimplifyThis() override;
-
-    uint32_t  GetThisComplexity() const override { return 10; }
     MathNode* CopyThis() const override { return new OperatorSinNode; }
 };
 
@@ -116,8 +106,6 @@ class OperatorCosNode : public OperatorNode {
 
     MathNode* Differentiate(const char* var) const override;
     MathNode* SimplifyThis() override;
-
-    uint32_t  GetThisComplexity() const override { return 10; }
     MathNode* CopyThis() const override { return new OperatorCosNode; }
 };
 
@@ -134,8 +122,6 @@ class OperatorTanNode : public OperatorNode {
 
     MathNode* Differentiate(const char* var) const override;
     MathNode* SimplifyThis() override;
-
-    uint32_t  GetThisComplexity() const override { return 15; }
     MathNode* CopyThis() const override { return new OperatorTanNode; }
 };
 
@@ -152,8 +138,6 @@ class OperatorCotNode : public OperatorNode {
 
     MathNode* Differentiate(const char* var) const override;
     MathNode* SimplifyThis() override;
-
-    uint32_t  GetThisComplexity() const override { return 15; }
     MathNode* CopyThis() const override { return new OperatorCotNode; }
 };
 
