@@ -1,4 +1,4 @@
-# Processor.
+# Processor
 
 ASM-like language compiler.
 
