@@ -1,5 +1,5 @@
 #include <cstring>  // strchr
-#include "src/assembler.hpp"
+#include "assembler.hpp"
 
 
 int main(int argc, char* argv[]) {

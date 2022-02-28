@@ -23,12 +23,12 @@ void mov(register_type reg1, register_type reg2) {
   mov(reg1, r[reg2]);
 }
 
-void fmov(ftregister_type freg, ftnumber_type num) {
+void movf(ftregister_type freg, ftnumber_type num) {
   xmm[freg] = num;
 }
 
-void fmov(ftregister_type freg1, ftregister_type freg2) {
-  fmov(freg1, xmm[freg2]);
+void movf(ftregister_type freg1, ftregister_type freg2) {
+  movf(freg1, xmm[freg2]);
 }
 
 //================================= IN =========================================
@@ -83,7 +83,7 @@ void cmp(register_type reg1, register_type reg2) {
   cmp(r[reg1], r[reg2]);
 }
 
-void fcmp(ftnumber_type num1, ftnumber_type num2) {
+void cmpf(ftnumber_type num1, ftnumber_type num2) {
   num1 -= num2;
   ZF = 0;
   SF = 0;
@@ -97,12 +97,12 @@ void fcmp(ftnumber_type num1, ftnumber_type num2) {
   }
 }
 
-void fcmp(ftregister_type freg, ftnumber_type num) {
-  fcmp(xmm[freg], num);
+void cmpf(ftregister_type freg, ftnumber_type num) {
+  cmpf(xmm[freg], num);
 }
 
-void fcmp(ftregister_type freg1, ftregister_type freg2) {
-  fcmp(xmm[freg1], xmm[freg2]);
+void cmpf(ftregister_type freg1, ftregister_type freg2) {
+  cmpf(xmm[freg1], xmm[freg2]);
 }
 
 //================================= ADD ========================================
@@ -114,12 +114,12 @@ void add(register_type reg1, register_type reg2) {
   add(reg1, r[reg2]);
 }
 
-void fadd(ftregister_type freg, ftnumber_type num) {
+void addf(ftregister_type freg, ftnumber_type num) {
   xmm[freg] += num;
 }
 
-void fadd(ftregister_type freg1, ftregister_type freg2) {
-  fadd(freg1, xmm[freg2]);
+void addf(ftregister_type freg1, ftregister_type freg2) {
+  addf(freg1, xmm[freg2]);
 }
 
 //================================= SUB ========================================
@@ -131,12 +131,12 @@ void sub(register_type reg1, register_type reg2) {
   sub(reg1, r[reg2]);
 }
 
-void fsub(ftregister_type freg, ftnumber_type num) {
+void subf(ftregister_type freg, ftnumber_type num) {
   xmm[freg] -= num;
 }
 
-void fsub(ftregister_type freg1, ftregister_type freg2) {
-  fsub(freg1, xmm[freg2]);
+void subf(ftregister_type freg1, ftregister_type freg2) {
+  subf(freg1, xmm[freg2]);
 }
 
 //================================= MUL ========================================
@@ -148,21 +148,21 @@ void mul(register_type reg1, register_type reg2) {
   mul(reg1, r[reg2]);
 }
 
-void fmul(ftregister_type freg, ftnumber_type num) {
+void mulf(ftregister_type freg, ftnumber_type num) {
   xmm[freg] *= num;
 }
 
-void fmul(ftregister_type freg1, ftregister_type freg2) {
-  fmul(freg1, xmm[freg2]);
+void mulf(ftregister_type freg1, ftregister_type freg2) {
+  mulf(freg1, xmm[freg2]);
 }
 
 //================================= DIV ========================================
-void fdiv(ftregister_type freg, ftnumber_type num) {
+void divf(ftregister_type freg, ftnumber_type num) {
   xmm[freg] /= num;
 }
 
-void fdiv(ftregister_type freg1, ftregister_type freg2) {
-  fdiv(freg1, xmm[freg2]);
+void divf(ftregister_type freg1, ftregister_type freg2) {
+  divf(freg1, xmm[freg2]);
 }
 
 //================================= SQRT =======================================

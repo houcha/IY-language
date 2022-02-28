@@ -1,5 +1,5 @@
 #include <cstring>              // strchr, strcmp
-#include "src/processor.hpp"
+#include "processor.hpp"
 
 
 int main(int argc, char* argv[]) {
